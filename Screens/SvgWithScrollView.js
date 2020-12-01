@@ -1,6 +1,8 @@
 import React from 'react'
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Image } from 'react-native';
 import Animated, {
+  Extrapolate,
+  interpolate,
   useAnimatedScrollHandler,
   useSharedValue,
   useAnimatedProps,
@@ -69,51 +71,114 @@ const P33 = vec(0, 1);
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
-const Slide = ({slide,index}) => {
-
-    const path = createPath({ x: P00.x + 0, y: P00.y });
+const Slide = ({slide,index,x}) => {
+  const animatedProps = useAnimatedProps(() => {
+  const progress = (x.value - width * index) / width;
+  const offset = interpolate(progress, [0, 1], [0, -2], Extrapolate.CLAMP);
+  const path = createPath({ x: P00.x + offset, y: P00.y });
+  if(path){
       addCurve(path, {
-        c1: addX(P01, 0),
+        c1: addX(P01, offset),
         c2: P02,
         to: P03,
       });
       addCurve(path, {
-        c1: addX(P11, 0),
-        c2: P12,
-        to: P13,
+        c1: P11,
+        c2: addX(P12, offset),
+        to: addX(P13, offset),
       });
       addCurve(path, {
-        c1: addX(P21, 0),
-        c2: P22,
-        to: P23,
+        c1: addX(P21, offset),
+        c2: {
+          x:
+            interpolate(
+              progress,
+              [(-1 * RATIO) / 2, 0],
+              [1, 0],
+              Extrapolate.CLAMP
+            ) + offset,
+          y: P22.y,
+        },
+        to: {
+          x:
+            interpolate(
+              progress,
+              [(-1 * RATIO) / 2, 0],
+              [1, 0],
+              Extrapolate.CLAMP
+            ) + offset,
+          y: P23.y,
+        },
       });
       addCurve(path, {
-        c1: addX(P31, 0),
-        c2: P32,
-        to: P33,
+        c1: {
+          x:
+            interpolate(
+              progress,
+              [(-1 * RATIO) / 2, 0],
+              [1, 0],
+              Extrapolate.CLAMP
+            ) + offset,
+          y: P31.y,
+        },
+        c2: addX(P32, offset),
+        to: addX(P33, offset),
       });
-    const d = serialize(path)
-
+    }
+    var d;
+    if (path) {
+      d = serialize(path)
+    } else {
+      d= "M 1 0 Z"
+    }
+      return {
+        d: d,
+        fill: slide.color,
+      };
+    });
   return (
     <View style={styles.container}>
       <Svg width={SIZE} height={SIZE} viewBox="0 0 2 2">
-        <AnimatedPath d={d} fill={slide.color} />
+        <AnimatedPath animatedProps={animatedProps} fill={slide.color} />
       </Svg>
+      <View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Image
+          source={{ uri: slide.picture }}
+          style={{
+            width: width * 0.61,
+            height: width * 0.61 * slide.aspectRatio,
+          }}
+        />
+        </View>
     </View>
   );
 }
 
 function SvgWithScrollView() {
+  const x = useSharedValue(0);
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      x.value = event.contentOffset.x;
+    },
+  });
+
   return (
     <Animated.ScrollView
       horizontal
+      onScroll={scrollHandler}
       scrollEventThrottle={16}
       snapToInterval={width}
       decelerationRate="fast"
-      showsHorizontalScrollIndicator={false}
+      showsHorizontalScrollIndicator={true}
     >
     {
-      slides.map((slide,index) => <Slide slide={slide} key={index} index={index} />)
+      slides.map((slide,index) => <Slide slide={slide} key={index} index={index} x={x}/>)
     }
     </Animated.ScrollView>
   )
