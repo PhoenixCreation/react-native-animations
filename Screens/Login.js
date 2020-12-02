@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { StyleSheet, Text, View, Dimensions, Image, Button } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Image, Button, TextInput, TouchableHighlight } from 'react-native';
 import Svg, { Path, Circle } from "react-native-svg";
 import Animated, {
   useAnimatedProps,
@@ -16,18 +16,57 @@ import Animated, {
 const {width, height} = Dimensions.get("window")
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
-const BACKGROUND_IMAGE ="https://raw.githubusercontent.com/wcandillon/can-it-be-done-in-react-native/master/reanimated-2/src/Fluid/assets/1.png"
 
+const randomArray = []
+for (var i = 0; i < 21; i++) {
+  randomArray.push({
+    val: Math.floor(Math.random() * 2),
+    pos: { x: i%3 , y: Math.floor(i / 3)}
+  })
+}
+
+function WaterBubble({type, position, progress}) {
+
+  const up = useAnimatedStyle(() => {
+    return {
+      position: "absolute",
+      transform: [
+        {translateX: (position.x * width / 8) + progress.value * 20  },
+        {translateY: height + (position.y * height / 7) - (progress.value * height)}
+      ]
+    }
+  })
+
+  if (type === 1) {
+    return (
+      <Animated.View style={up}>
+        <Svg width={40} height={40} viewBox="0 0 363.188 363.188">
+          <Path fill="white" d="M111.667 132.311C50.093 132.311 0 182.404 0 243.977s50.093 111.667 111.667 111.667 111.667-50.094 111.667-111.667-50.094-111.666-111.667-111.666zm0 208.333C58.364 340.644 15 297.28 15 243.977c0-53.302 43.364-96.666 96.667-96.666s96.667 43.364 96.667 96.666c-.001 53.303-43.365 96.667-96.667 96.667z" />
+          <Path fill="white" d="M111.667 173.977c-4.142 0-7.5 3.357-7.5 7.5s3.358 7.5 7.5 7.5c30.327 0 55 24.673 55 55 0 4.143 3.358 7.5 7.5 7.5s7.5-3.357 7.5-7.5c0-38.598-31.402-70-70-70z" />
+        </Svg>
+      </Animated.View>
+    )
+  } else {
+    return (
+      <Animated.View style={up}>
+        <Svg width={40} height={40} viewBox="0 0 363.188 363.188">
+          <Path fill="white" d="M298.333 69.835c-35.761 0-64.855 29.094-64.855 64.855s29.094 64.854 64.855 64.854 64.855-29.094 64.855-64.854c0-35.761-29.093-64.855-64.855-64.855zm0 114.71c-27.49 0-49.855-22.364-49.855-49.854s22.365-49.855 49.855-49.855 49.855 22.365 49.855 49.855-22.364 49.854-49.855 49.854z" />
+          <Path fill="white" d="M302.012 157.925c-14.84 0-26.913-12.073-26.913-26.913 0-4.143-3.358-7.5-7.5-7.5s-7.5 3.357-7.5 7.5c0 23.111 18.802 41.913 41.913 41.913 4.142 0 7.5-3.357 7.5-7.5s-3.358-7.5-7.5-7.5z" />
+        </Svg>
+      </Animated.View>
+    );
+  }
+}
 
 function Login() {
 
   const progress = useSharedValue(0);
 
   useEffect(() => {
-    progress.value = withTiming(1, {
+    progress.value = repeat(withTiming(1, {
       duration: 1000,
       easing: Easing.linear,
-    });
+    }),-1,true);
   }, [progress]);
 
   const data = useDerivedValue(() => {
@@ -102,11 +141,38 @@ function Login() {
   })
 
   const imageStyle = useAnimatedStyle(() => {
-    const zi = interpolate(progress.value, [0,1,2],[0,0,5])
+    const zi = interpolate(progress.value, [0,1,2],[0,0,0])
     return {
       position: "absolute",
       zIndex: zi,
     }
+  })
+  const leftSlide = useAnimatedStyle(() => {
+    const tx = interpolate(progress.value, [0,1,2],[-25,-25,(width / -2) - 25])
+    const op = interpolate(progress.value, [0,1,2],[1,1,0])
+
+    return {
+      transform: [{ translateX: tx}],
+      opacity: op,
+    }
+  })
+  const rightSlide = useAnimatedStyle(() => {
+    const tx = interpolate(progress.value, [0,1,2],[25, 25, (width / 2) + 25])
+    const op = interpolate(progress.value, [0,1,2],[1,1,0])
+
+    return {
+      transform: [{ translateX: tx}, { scaleX: -1}, { translateY: -80}],
+      opacity: op,
+    }
+  })
+  const authBox = useAnimatedStyle(() => {
+    const op = interpolate(progress.value, [0,1,1.5,2],[0,0,0,height])
+
+    return {
+      transform: [
+        {translateY: op}
+      ]
+    };
   })
 
   const runAnimation = (end) => {
@@ -125,20 +191,41 @@ function Login() {
 
   return (
     <View style={{ flex: 1, flexDirection: "row", backgroundColor: "lightblue"}}>
-    <View style={{flexDirection: "row", width: width, justifyContent: "space-between",
-    position: "absolute", top: 0, zIndex: 100 }}>
-      <Button
-        title="Go to End"
-        onPress={() => runAnimation(1)}
+    <Animated.View style={[{ zIndex: 200, position: "absolute", top: 0, bottom: 0, left: 0, right: 0, justifyContent: "center", alignItems: "center"}, authBox]}>
+      <TextInput
+        style={{ borderRadius: 15,margin: 20, color: "blue", fontSize: 25, width: width / 2, height: 50, borderColor: "white", borderWidth: 3, backgroundColor: "#aaa5"}}
+        textAlign="center"
+        placeholder="Username"
       />
-      <Button
-        title="Go to Start"
-        onPress={() => runAnimation(0)}
+      <TextInput
+        style={{ borderRadius: 15,margin: 20, color: "blue", fontSize: 25, width: width / 2, height: 50, borderColor: "white", borderWidth: 3, backgroundColor: "#aaa5"}}
+        textAlign="center"
+        placeholder="Password"
       />
-      <Button
-        title="Login"
+      <TouchableHighlight
         onPress={() => login(1)}
-      />
+        style={{ backgroundColor: "white", borderWidth: 2, borderColor: "blue", padding: 10, paddingLeft: 20, paddingRight: 20, borderRadius: 20}}
+      >
+        <Text style={{ fontSize: 18, color: "blue" }}>LOG IN</Text>
+      </TouchableHighlight>
+    </Animated.View>
+    <View style={{ position: "absolute", zIndex: 10}}>
+      {
+        randomArray.map((bubble,i) => {
+          return (
+            <WaterBubble type={bubble.val} key={i} position={bubble.pos} progress={progress}/>
+          );
+        })
+      }
+    </View>
+    <View style={{ position: "absolute", zIndex: 10, transform: [{translateX: width / 2 + 25}]}}>
+      {
+        randomArray.map((bubble,i) => {
+          return (
+            <WaterBubble type={bubble.val} key={i} position={bubble.pos} progress={progress}/>
+          );
+        })
+      }
     </View>
       <Animated.View style={imageStyle}>
         {/*<Image
@@ -401,7 +488,7 @@ function Login() {
       />
     </Svg>
       </Animated.View>
-      <View style={{flex: 1,flexDirection: "column",  transform: [{ translateX: -25}]}}>
+      <Animated.View style={[{flex: 1,flexDirection: "column"}, leftSlide]}>
         <Svg width={width} height={width} viewBox={`0 0 4 4`} >
           <AnimatedPath
             fill="#5577dd"
@@ -422,8 +509,8 @@ function Login() {
             animatedProps={path2}
           />
         </Svg>
-      </View>
-      <View style={{flex: 1,flexDirection: "column", transform: [{ translateX: 25},{translateY: -80}, { scaleX: -1}]}}>
+      </Animated.View>
+      <Animated.View style={[{flex: 1,flexDirection: "column"}, rightSlide]}>
         <Svg width={width} height={width} viewBox={`0 0 4 4`} >
           <AnimatedPath
             fill="#5577dd"
@@ -444,7 +531,7 @@ function Login() {
             animatedProps={path4}
           />
         </Svg>
-      </View>
+      </Animated.View>
     </View>
   )
 }
