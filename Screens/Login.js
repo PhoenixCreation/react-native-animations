@@ -209,7 +209,8 @@ function Login() {
         <Text style={{ fontSize: 18, color: "blue" }}>LOG IN</Text>
       </TouchableHighlight>
     </Animated.View>
-    <View style={{ position: "absolute", zIndex: 10}}>
+    {/* Enable below comment if bubble are wanted. but will drop fps to 10*/}
+    {/*<View style={{ position: "absolute", zIndex: 10}}>
       {
         randomArray.map((bubble,i) => {
           return (
@@ -226,7 +227,7 @@ function Login() {
           );
         })
       }
-    </View>
+    </View>*/}
       <Animated.View style={imageStyle}>
         {/*<Image
           source={{

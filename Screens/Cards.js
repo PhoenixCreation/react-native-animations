@@ -124,7 +124,7 @@ function Cards() {
     <View style={styles.container}>
     {
       products.map((product,i) => (
-        <Card product={product} index={i} y={y} />
+        <Card product={product} index={i} y={y} key={i}/>
       ))
     }
     </View>
