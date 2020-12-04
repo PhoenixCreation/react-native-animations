@@ -24,6 +24,8 @@ export const SCREENS = [
   { name: "SvgAnimations", component: SvgAnimations},
   { name: "Cards", component: Cards},
   { name: "StrokeAnimation", component: StrokeAnimation},
+  //Add above this line....temp should always be at the end.
+  { name: "Temp", component: Temp},
 ]
 
 export default function App() {
