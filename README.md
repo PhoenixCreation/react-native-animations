@@ -3,7 +3,7 @@
 
 > This is compilation of animations made by &#34;Phoenix&#34;. Some of them are very dumb so don't be so serious about this.
 
-### ✨ [Demo](Comming soon....)
+### ✨ [Comming soon...](https://phoenixcreation2.herokuapp.com)
 
 ## Install
 
@@ -27,7 +27,7 @@ yarn start
 
 ## Show your support
 
-Give a ⭐️ if this project helped you!
+Give a ⭐️ if you think this is complete mess!
 
 
 ***
