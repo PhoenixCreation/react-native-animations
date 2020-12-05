@@ -1,5 +1,7 @@
 import React from 'react'
 import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
+import { SharedElement } from "react-navigation-shared-element";
+import * as Animatable from 'react-native-animatable';
 
 const colors = [
   "black",
@@ -16,21 +18,41 @@ const colors = [
   "#6555ff",
   "#44ff22",
 ]
+const animation = {
+  0: {opacity: 0, translateX: 50},
+  1: {opacity: 1, translateX: 0},
+}
+
+const AnimatableScrollView = Animatable.createAnimatableComponent(ScrollView);
 
 function VehicalFullView({ route, navigation }) {
   const { car } = route.params
   return (
     <View style={styles.container}>
       <View style={{ height: 50, backgroundColor: colors[car.key]}}></View>
+      <SharedElement id={`item.${car.key}.image`}>
       <Image
         source={{ uri: car.image }}
         style={styles.image}
       />
+      </SharedElement>
       <View style={{ position: "absolute", top: 55, left: 12}}>
-        <Text style={styles.model}>{car.name}</Text>
-        <Text style={styles.description}>{car.description}</Text>
+        <SharedElement id={`item.${car.key}.name`}>
+          <Text style={styles.model}>{car.name}</Text>
+        </SharedElement>
+        <SharedElement id={`item.${car.key}.description`}>
+          <Text style={styles.description}>{car.description}</Text>
+        </SharedElement>
       </View>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0, top: 250}}>
+      <AnimatableScrollView
+        useNativeDriver
+        animation={animation}
+        delay={200}
+        duration={400}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={{ flexGrow: 0, top: 270}}
+      >
       {
         colors.map((color,i) => {
           return (
@@ -45,13 +67,13 @@ function VehicalFullView({ route, navigation }) {
           );
         })
       }
-      </ScrollView>
-      <View style={{ height: 70, backgroundColor: colors[3], top: 280 }}>
-      </View>
-      <View style={{ height: 70, backgroundColor: colors[4], top: 280}}>
-      </View>
-      <View style={{ height: 70, backgroundColor: colors[5], top: 280 }}>
-      </View>
+      </AnimatableScrollView>
+      <Animatable.View animation={animation} useNativeDriver duration={500} delay={400} style={{ height: 70, backgroundColor: colors[3], top: 300 }}>
+      </Animatable.View>
+      <Animatable.View animation={animation} useNativeDriver duration={500} delay={550} style={{ height: 70, backgroundColor: colors[4], top: 300}}>
+      </Animatable.View>
+      <Animatable.View animation={animation} useNativeDriver duration={500} delay={700} style={{ height: 70, backgroundColor: colors[5], top: 300 }}>
+      </Animatable.View>
     </View>
   )
 }
@@ -77,9 +99,24 @@ const styles = StyleSheet.create({
     height: 140 * 1.2,
     width: "100%",
     position: "absolute",
-    resizeMode: "contain",
+    resizeMode: "center",
     top: 120,
   },
 })
+
+VehicalFullView.sharedElements = (route, otherroute, showing) => {
+  const { car } = route.params
+  return [
+    {
+      id: `item.${car.key}.name`
+    },
+    {
+      id: `item.${car.key}.description`
+    },
+    {
+      id: `item.${car.key}.image`
+    },
+  ];
+}
 
 export default VehicalFullView

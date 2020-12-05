@@ -1,5 +1,7 @@
 import React from 'react'
-import { StyleSheet, Text, View, Image, Flatlist, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, Flatlist, TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native';
+import { SharedElement } from "react-navigation-shared-element";
+
 
 const ITEM_SIZE = 140
 const SPACING = 12
@@ -79,18 +81,26 @@ function Main({ navigation }) {
     {
       cars.map((car,i) => {
         return (
-          <TouchableOpacity key={i} onPress={() => navigation.navigate("VehicalFullView", { car })}>
+          <TouchableWithoutFeedback key={i} onPress={() => navigation.navigate("VehicalFullView", { car })}>
+          <View>
             <View style={styles.item}>
               <View>
-                <Text style={styles.model}>{car.name}</Text>
-                <Text style={styles.description}>{car.description}</Text>
+                <SharedElement id={`item.${car.key}.name`}>
+                  <Text style={styles.model}>{car.name}</Text>
+                </SharedElement>
+                <SharedElement id={`item.${car.key}.description`}>
+                  <Text style={styles.description}>{car.description}</Text>
+                </SharedElement>
               </View>
             </View>
+            <SharedElement id={`item.${car.key}.image`} style={{ zIndex: -2}}>
             <Image
               source={{ uri: car.image }}
               style={styles.image}
             />
-          </TouchableOpacity>
+            </SharedElement>
+            </View>
+          </TouchableWithoutFeedback>
         );
       })
     }
@@ -104,7 +114,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: SPACING,
     padding: SPACING,
-    backgroundColor: "#ddd"
+    backgroundColor: "#ddd5"
   },
   model: {
     fontSize: 20,
@@ -114,7 +124,6 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 15,
     opacity: 0.7,
-    width: 100,
     position: "absolute",
     top: 28,
   },
@@ -125,6 +134,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: '-55%',
     resizeMode: "center",
+    zIndex: -2,
   },
 })
 
