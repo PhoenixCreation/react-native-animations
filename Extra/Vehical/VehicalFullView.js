@@ -45,10 +45,6 @@ function VehicalFullView({ route, navigation }) {
         </SharedElement>
       </View>
       <AnimatableScrollView
-        useNativeDriver
-        animation={animation}
-        delay={200}
-        duration={400}
         horizontal
         showsHorizontalScrollIndicator={false}
         style={{ flexGrow: 0, top: 270}}
@@ -56,23 +52,23 @@ function VehicalFullView({ route, navigation }) {
       {
         colors.map((color,i) => {
           return (
-            <View key={i} style={{
+            <Animatable.View useNativeDriver animation={animation} duration={400} delay={300 + (i * 50)} key={i} style={{
               width: 50,
               height: 50,
               backgroundColor: color,
               marginLeft: 12,
               borderRadius: 25,
               borderWidth: 0.4
-            }}></View>
+            }}></Animatable.View>
           );
         })
       }
       </AnimatableScrollView>
-      <Animatable.View animation={animation} useNativeDriver duration={500} delay={400} style={{ height: 70, backgroundColor: colors[3], top: 300 }}>
+      <Animatable.View animation={animation} useNativeDriver duration={500} delay={400 + 300} style={{ height: 70, backgroundColor: colors[3], top: 300 }}>
       </Animatable.View>
-      <Animatable.View animation={animation} useNativeDriver duration={500} delay={550} style={{ height: 70, backgroundColor: colors[4], top: 300}}>
+      <Animatable.View animation={animation} useNativeDriver duration={500} delay={550 + 300} style={{ height: 70, backgroundColor: colors[4], top: 300}}>
       </Animatable.View>
-      <Animatable.View animation={animation} useNativeDriver duration={500} delay={700} style={{ height: 70, backgroundColor: colors[5], top: 300 }}>
+      <Animatable.View animation={animation} useNativeDriver duration={500} delay={700 + 300} style={{ height: 70, backgroundColor: colors[5], top: 300 }}>
       </Animatable.View>
     </View>
   )
