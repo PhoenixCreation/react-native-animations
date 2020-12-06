@@ -6,7 +6,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import Temp from './Screens/Temp'
 import HomePage from './Screens/HomePage'
-import Vehical from './Screens/Vehical'
+import CoffeeShop from './Screens/CoffeeShop' // A cafeteria shop app
+import Vehical from './Screens/Vehical' // Vehical(car) showcase app design
 import Snapchat from './Screens/Snapchat' // Snapchat stories translation...
 import Login from './Screens/Login' // A login animation like door opening....
 import SvgWithScrollView from './Screens/SvgWithScrollView' // Animation with scroll and svg....
@@ -26,6 +27,7 @@ export const SCREENS = [
   { name: "Cards", component: Cards},
   { name: "StrokeAnimation", component: StrokeAnimation},
   { name: "Vehical", component: Vehical},
+  { name: "CoffeeShop", component: CoffeeShop},
   //Add above this line....temp should always be at the end.
   { name: "Temp", component: Temp},
 ]
