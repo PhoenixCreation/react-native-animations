@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dimensions, ScrollView, StyleSheet, Text, View, Image, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { Animated, Dimensions, ScrollView, StyleSheet, Text, View, Image, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { SharedElement } from "react-navigation-shared-element";
 
 const { width, height } = Dimensions.get("window");
@@ -15,7 +15,7 @@ const topTabs = [
   "Hot chocolate",
   "Milkshkes",
 ]
-const products = [
+var products = [
   {
     key: 1,
     title: "Iced Coffee Rosé",
@@ -61,6 +61,15 @@ const products = [
     color2: "#F3F1ED",
     aspectRatio: 757 / 735,
     image: "https://raw.githubusercontent.com/wcandillon/can-it-be-done-in-react-native/master/season4/src/PhilzCoffee/assets/rose.png",
+  },
+  {
+    key: 6,
+    title: "Philharmonic",
+    subtitle: "Large, Medium Cream, Medium Sugar",
+    color1: "#4DD2A5",
+    color2: "#63D8B0",
+    aspectRatio: 1,
+    image: "https://raw.githubusercontent.com/wcandillon/can-it-be-done-in-react-native/master/season4/src/PhilzCoffee/assets/philharmonic.png",
   },
 ];
 const extraProducts = [
@@ -134,74 +143,81 @@ const extraProducts = [
 function CoffeeShopHome({ navigation }) {
   const [currentTopTab, setCurrentTopTab] = React.useState(topTabs[0])
 
+  const scrollX = React.useRef(new Animated.Value(0)).current;
+
   return (
-    <View style={[{flex: 1}]}>
+    <View style={[{flex: 1, justifyContent: "center"}]}>
     <ScrollView
       showsVerticalScrollIndicator={false}
       scrollEventThrottle={16}
     >
-      <View
-        style={{
-          marginTop: 20,
-          marginHorizontal: 15,
-          borderRadius: 40,
-          overflow: "hidden",
-          borderWidth: 1,
-        }}
-      >
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-
+        <View
+          style={{
+            marginTop: 20,
+            marginHorizontal: 15,
+            borderRadius: 40,
+            overflow: "hidden",
+            borderWidth: 1,
+          }}
         >
-        {
-          topTabs.map((tab,index) => {
-            const isActive = currentTopTab === tab;
-            return (
-              <TouchableOpacity key={index} onPress={() => setCurrentTopTab(tab)}>
-                <Text style={{
-                   ...styles.topTabButton,
-                   backgroundColor: isActive ? "orange" : "lightgrey",
-                   color: isActive ? "white" : "black",
-                   borderWidth: isActive ? 1 : 0.5,
-                   borderColor: isActive ? "black" : "grey",
-                 }}>{tab}</Text>
-              </TouchableOpacity>
-            );
-          })
-        }
-        </ScrollView>
-      </View>
-      <ScrollView
-        horizontal
-        snapToInterval={width}
-        decelerationRate="fast"
-        showsHorizontalScrollIndicator={false}
-        
-      >
-        {
-          products.map((product,index) => {
-            return (
-              <TouchableWithoutFeedback key={index} onPress={() => navigation.navigate("CoffeeInfo", { product })}>
-                <View style={{ ...styles.coffeCard,backgroundColor: product.color1}}>
-                  <SharedElement id={`product.${product.key}.title`}>
-                    <Text style={ styles.title } >{product.title}</Text>
-                  </SharedElement>
-                  <SharedElement id={`product.${product.key}.image`}>
-                    <Image
-                      source={{ uri: product.image }}
-                      style={ styles.image }
-                    />
-                  </SharedElement>
-                  <SharedElement id={`product.${product.key}.subtitle`}>
-                    <Text style={ styles.subtitle } >{product.subtitle}</Text>
-                  </SharedElement>
-                </View>
-              </TouchableWithoutFeedback>
-            );
-          })
-        }
-      </ScrollView>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+
+          >
+          {
+            topTabs.map((tab,index) => {
+              const isActive = currentTopTab === tab;
+              return (
+                <TouchableOpacity key={index} onPress={() => setCurrentTopTab(tab)}>
+                  <Text style={{
+                     ...styles.topTabButton,
+                     backgroundColor: isActive ? "orange" : "lightgrey",
+                     color: isActive ? "white" : "black",
+                     borderWidth: isActive ? 1 : 0.5,
+                     borderColor: isActive ? "black" : "grey",
+                   }}>{tab}</Text>
+                </TouchableOpacity>
+              );
+            })
+          }
+          </ScrollView>
+        </View>
+        <Animated.ScrollView
+          horizontal
+          snapToInterval={width}
+          decelerationRate="fast"
+          showsHorizontalScrollIndicator={false}
+          scrollEventThrottle={32}
+          onScroll={Animated.event(
+            [{ nativeEvent: {contentOffset: {x: scrollX}}}],
+            {useNativeDriver: false}
+          )}
+        >
+          {
+            products.map((product,index) => {
+              return (
+                <TouchableWithoutFeedback key={index} onPress={() => navigation.navigate("CoffeeInfo", { product })}>
+                  <View style={{ ...styles.coffeCard,backgroundColor: product.color1}}>
+                    <SharedElement id={`product.${product.key}.title`}>
+                      <Text style={ styles.title } >{product.title}</Text>
+                    </SharedElement>
+                    <SharedElement id={`product.${product.key}.image`}>
+                      <Image
+                        source={{ uri: product.image }}
+                        style={ styles.image }
+                      />
+                    </SharedElement>
+                    <SharedElement id={`product.${product.key}.subtitle`}>
+                      <Text style={ styles.subtitle } >{product.subtitle}</Text>
+                    </SharedElement>
+                  </View>
+                </TouchableWithoutFeedback>
+              );
+            })
+          }
+        </Animated.ScrollView>
+        <Indicator scrollX={scrollX} />
       <ScrollView
         showsVerticalScrollIndicator={false}
       >
@@ -232,7 +248,63 @@ function CoffeeShopHome({ navigation }) {
         }
       </ScrollView>
     </ScrollView>
+    <Background scrollX={scrollX} />
     </View>
+  );
+}
+
+const Indicator = ({ scrollX }) => {
+
+  return (
+    <View style={{ flexDirection: "row", width: width, justifyContent: "center"}}>
+      {
+        products.map((_,i) => {
+          const scale = scrollX.interpolate({
+            inputRange: [(i - 1) * width, i * width, (i + 1) * width],
+            outputRange: [0.7,2,0.7],
+            extrapolate: "clamp"
+          })
+          const opacity = scrollX.interpolate({
+            inputRange: [(i - 1) * width, i * width, (i + 1) * width],
+            outputRange: [0.6,1,0.6],
+            extrapolate: "clamp"
+          })
+          return (
+            <Animated.View key={i} style={{
+              height: 8,
+              width: 10,
+              borderRadius: 3,
+              backgroundColor: "black",
+              margin: 10,
+              opacity,
+              transform: [
+                { scaleX: scale }
+              ]
+            }}>
+            </Animated.View>
+          );
+        })
+      }
+    </View>
+  );
+}
+
+const Background = ({ scrollX }) => {
+  const backgroundColor = scrollX.interpolate({
+    inputRange: products.map((_,i) => i * width),
+    outputRange: products.map((pro) => pro.color2)
+  })
+  return (
+    <Animated.View
+      style={[
+        StyleSheet.absoluteFillObject,
+        {
+          zIndex: -2,
+          backgroundColor
+        }
+      ]}
+    >
+    </Animated.View>
   );
 }
 
@@ -254,6 +326,8 @@ const styles = StyleSheet.create({
     marginHorizontal: CARD_MARGIN * 2,
     borderRadius: 55,
     padding: CARD_MARGIN,
+    borderWidth: 1,
+    borderColor: "white",
   },
   title: {
     fontSize: 20,
@@ -278,7 +352,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     height: EXTRA_PRODUCT_HEIGHT,
     margin: 10,
-    backgroundColor: "#ffff0066",
+    backgroundColor: "#ddff2266",
     padding: 10,
     borderRadius: 15,
     borderWidth: 1,
