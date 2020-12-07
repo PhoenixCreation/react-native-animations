@@ -1,28 +1,29 @@
 import React from 'react'
-import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity, ScrollView } from 'react-native';
 import { SCREENS } from '../App'
 
 function HomePage({ navigation }) {
   return (
-    <View style={{ flex: 1, marginTop: 20}}>
+    <ScrollView style={{ flex: 1, marginTop: 20}}>
       {
         SCREENS.map((screenName, i) => {
           if(i === 0){
             return
           }
+
           return (
             <TouchableOpacity
               key={i}
               onPress={() => navigation.navigate(screenName.name)}
             >
-              <View style={styles.navigationButton}>
+              <View style={{ ...styles.navigationButton, backgroundColor: i === 1 ? "orange" : "white"}}>
                 <Text style={{ fontSize: 16}}>{screenName.name}</Text>
               </View>
             </TouchableOpacity>
           )
         })
       }
-    </View>
+    </ScrollView>
   )
 }
 
