@@ -34,6 +34,7 @@
     },
     "experiments": {
       "turboModules": true
-    }
+    },
+    "description": "A repo with full of nonsense(some with sense too) animations done in react natiive through different techniques.\n"
   }
 }

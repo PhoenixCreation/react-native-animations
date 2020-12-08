@@ -7,12 +7,18 @@ function HomePage({ navigation }) {
     <ScrollView style={{ flex: 1, marginTop: 20}}>
       {
         SCREENS.map((screenName, i) => {
+          let backgroundColor = "white"
+          if (screenName.name === "TaskList") { // current should be marked as yellow colored...
+            backgroundColor = "yellow"
+          } else if(i === 0){
+            backgroundColor = "orange"
+          }
           return (
             <TouchableOpacity
               key={i}
               onPress={() => navigation.navigate(screenName.name)}
             >
-              <View style={{ ...styles.navigationButton, backgroundColor: i === 0 ? "orange" : "white"}}>
+              <View style={{ ...styles.navigationButton, backgroundColor}}>
                 <Text style={{ fontSize: 16}}>{screenName.name}</Text>
               </View>
             </TouchableOpacity>
