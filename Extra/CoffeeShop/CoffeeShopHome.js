@@ -1,5 +1,5 @@
 import React from 'react'
-import { Animated, Dimensions, ScrollView, StyleSheet, Text, View, Image, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { Animated, Dimensions, ScrollView, StyleSheet, Text, View, Image, TouchableOpacity, TouchableWithoutFeedback, Button } from 'react-native';
 import { SharedElement } from "react-navigation-shared-element";
 
 const { width, height } = Dimensions.get("window");
@@ -142,8 +142,34 @@ const extraProducts = [
 
 function CoffeeShopHome({ navigation }) {
   const [currentTopTab, setCurrentTopTab] = React.useState(topTabs[0])
+  const [trigger, setTrigger] = React.useState(0)
+  const cardScroll = React.useRef()
 
   const scrollX = React.useRef(new Animated.Value(0)).current;
+
+  const scrolltoCardWithNumber = (cardNum) => {
+    if (cardScroll.current) {
+      cardScroll.current.scrollTo({x: width * (cardNum), y: 0, animated: true})
+    }
+  }
+
+  const scrolltoNext = () => {
+      var cur = Math.floor(scrollX._value/ width)
+      cur++
+      if (cur === products.length) {
+        cur = 0
+      }
+      scrolltoCardWithNumber(cur)
+
+  }
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setTrigger((prev) =>{ return ++prev;})
+      scrolltoNext()
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [trigger]);
 
   return (
     <View style={[{flex: 1, justifyContent: "center"}]}>
@@ -184,11 +210,12 @@ function CoffeeShopHome({ navigation }) {
           </ScrollView>
         </View>
         <Animated.ScrollView
+          ref={cardScroll}
           horizontal
           snapToInterval={width}
           decelerationRate="fast"
           showsHorizontalScrollIndicator={false}
-          scrollEventThrottle={32}
+          scrollEventThrottle={16}
           onScroll={Animated.event(
             [{ nativeEvent: {contentOffset: {x: scrollX}}}],
             {useNativeDriver: false}
@@ -196,22 +223,29 @@ function CoffeeShopHome({ navigation }) {
         >
           {
             products.map((product,index) => {
+              const inputRange = [(index - 1) * width, index * width, (index + 1) * width]
+              const outputRange = [0.6,1,0.6]
+              const translateX = scrollX.interpolate({
+                inputRange,
+                outputRange: [-60, 0, 60],
+                extrapolate: "clamp",
+              })
               return (
                 <TouchableWithoutFeedback key={index} onPress={() => navigation.navigate("CoffeeInfo", { product })}>
-                  <View style={{ ...styles.coffeCard,backgroundColor: product.color1}}>
+                  <Animated.View style={[styles.coffeCard,{backgroundColor: product.color1,transform: [{translateX}]}]}>
                     <SharedElement id={`product.${product.key}.title`}>
                       <Text style={ styles.title } >{product.title}</Text>
                     </SharedElement>
                     <SharedElement id={`product.${product.key}.image`}>
                       <Image
                         source={{ uri: product.image }}
-                        style={ styles.image }
+                        style={styles.image}
                       />
                     </SharedElement>
                     <SharedElement id={`product.${product.key}.subtitle`}>
                       <Text style={ styles.subtitle } >{product.subtitle}</Text>
                     </SharedElement>
-                  </View>
+                  </Animated.View>
                 </TouchableWithoutFeedback>
               );
             })
@@ -255,6 +289,7 @@ function CoffeeShopHome({ navigation }) {
 
 const Indicator = ({ scrollX }) => {
 
+
   return (
     <View style={{ flexDirection: "row", width: width, justifyContent: "center"}}>
       {
@@ -270,18 +305,18 @@ const Indicator = ({ scrollX }) => {
             extrapolate: "clamp"
           })
           return (
-            <Animated.View key={i} style={{
-              height: 8,
-              width: 10,
-              borderRadius: 3,
-              backgroundColor: "black",
-              margin: 10,
-              opacity,
-              transform: [
-                { scaleX: scale }
-              ]
-            }}>
-            </Animated.View>
+              <Animated.View key={i} style={{
+                height: 8,
+                width: 10,
+                borderRadius: 3,
+                backgroundColor: "black",
+                margin: 10,
+                opacity,
+                transform: [
+                  { scaleX: scale }
+                ]
+              }}>
+              </Animated.View>
           );
         })
       }

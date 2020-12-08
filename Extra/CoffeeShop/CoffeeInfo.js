@@ -31,6 +31,11 @@ const opacityChanger = {
   0: { opacity: 0},
   1: { opacity: 1},
 }
+const like = {
+  0: { translateY: 0, scaleX: 1},
+  0.5: { translateY: -50, scaleX: 0.1},
+  1: { translateY: 0, scaleX: 1}
+}
 // product = {
 //
 //   key: 1,
@@ -45,6 +50,9 @@ const opacityChanger = {
 
 function CoffeeInfo({ navigation, route }) {
   const { product } = route.params
+
+  const likeText = React.useRef()
+
   return (
     <View style={{...styles.container, backgroundColor: product.color2}}>
       <View style={styles.header}>
@@ -119,8 +127,8 @@ function CoffeeInfo({ navigation, route }) {
         delay={1500}
         style={styles.buttonContainer}
       >
-        <TouchableOpacity onPress={() => {}} style={styles.likeButton}>
-          <Text style={styles.likeButtonText}>♡</Text>
+        <TouchableOpacity onPress={() => {likeText.current.animate(like)}} style={styles.likeButton}>
+          <Animatable.Text ref={likeText} style={styles.likeButtonText}>♡</Animatable.Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => {}} style={styles.buyButton}>
           <Text style={styles.buyButtonText}>Add to cart</Text>
