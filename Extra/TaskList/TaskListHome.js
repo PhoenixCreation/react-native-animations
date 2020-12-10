@@ -1,7 +1,39 @@
 import React from 'react'
-import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, Pressable } from 'react-native';
 import { Svg, Circle } from "react-native-svg"
 
+const Todos = [
+  {
+    key: 1,
+    title: "Title of todo",
+    description: "Description of the first todo and it should be only two lines of content",
+    icon: require("../../assets/adaptive-icon.png"),
+    color: "#2ADFEB",
+    done: false,
+    time: new Date().toUTCString(),
+
+  },
+  {
+    key: 2,
+    title: "Title of todo",
+    description: "Description of the first todo and it should be only two lines of content",
+    icon: { uri: "https://picsum.photos/200"},
+    color: "#2AEB54",
+    done: false,
+    time: new Date().toUTCString(),
+
+  },
+  {
+    key: 3,
+    title: "Title of todo",
+    description: "Description of the first todo and it should be only two lines of content",
+    icon: require("../../assets/adaptive-icon.png"),
+    color: "#2ADFEB",
+    done: false,
+    time: new Date().toUTCString(),
+
+  },
+]
 const PROFILE_INFO = {
   image: "https://phoenixcreation2.herokuapp.com/static/logomain.png",
   name: {
@@ -11,7 +43,7 @@ const PROFILE_INFO = {
   todos: 15,
 }
 
-function TaskListHome() {
+function TaskListHome({ navigation }) {
   return (
     <ScrollView style={styles.app} showsVerticalScrollIndicator={false}>
       <View style={styles.container}>
@@ -24,51 +56,26 @@ function TaskListHome() {
           </View>
           <View style={styles.headerNameCont}>
             <Text style={styles.profileName}>{PROFILE_INFO.name.first}</Text>
-            <Text style={styles.todosCount}>{"Total Todos: " + PROFILE_INFO.todos}</Text>
+            <Text style={styles.todosCount}>{"Total Todos: " + 15}</Text>
           </View>
         </View>
       </View>
       <View style={{...styles.container, paddingVertical: 22}}>
-        <View style={styles.todosCont}>
-          <View style={styles.todo}>
-            <View style={styles.todoIconCont}>
-              <Image
-                source={require("../../assets/adaptive-icon.png")}
-                style={styles.todoIcon}
-              />
-            </View>
-            <View style={styles.todoInfoCont}>
-              <Text numberOfLines={1} style={styles.todoInfoTitle}>Title of todo</Text>
-              <Text numberOfLines={2} style={styles.todoInfoDesc}>Description of the first todo and it should be only two lines of content</Text>
-            </View>
-          </View>
-          <View style={{...styles.todo, marginBottom: 0}}>
-            <View style={styles.todoIconCont}>
-              <Image
-              source={require("../../assets/icon.png")}
-              style={styles.todoIcon}
-              />
-            </View>
-            <View style={styles.todoInfoCont}>
-              <Text numberOfLines={1} style={styles.todoInfoTitle}>Title of todo</Text>
-              <Text numberOfLines={2} style={styles.todoInfoDesc}>Description of the first todo and it should be only two lines of content</Text>
-            </View>
-          </View>
-        </View>
+        <TodoContainer todos={Todos} />
       </View>
       <View style={{...styles.container, paddingVertical: 22}}>
         <View style={styles.buttonsCont}>
-          <View style={styles.button}>
+          <Pressable onPress={() => navigation.navigate("TaskListAdd", { type: "normal", PROFILE_INFO})} style={styles.button}>
             <Text style={styles.buttonText}>Create Todo</Text>
-          </View>
-          <View style={{...styles.button, marginRight: 0, backgroundColor: "#1324C2"}}>
+          </Pressable>
+          <Pressable onPress={() => navigation.navigate("TaskListAdd", { type: "important", PROFILE_INFO})} style={{...styles.button, marginRight: 0, backgroundColor: "#1324C2"}}>
             <Text style={{ ...styles.buttonText, color: "white", fontSize: 15}}>Important Todo</Text>
-          </View>
+          </Pressable>
         </View>
       </View>
       <View style={{...styles.container, paddingVertical: 22}}>
         <View style={styles.progressCont}>
-          <ProgressCard title="Progress" progress={20} />
+          <ProgressCard title="Progress" progress={10} />
           <ProgressCard title="Progress" progress={45} />
           <ProgressCard title="Progress" progress={65} />
           <ProgressCard title="Progress" progress={85} />
@@ -81,6 +88,46 @@ function TaskListHome() {
       </View>
     </ScrollView>
   )
+}
+
+const TodoContainer = ({ todos }) => {
+
+  if(todos.length === 0){
+    return <View><Text>Start Adding todos to show them here..</Text></View>
+  }
+  return (
+    <View style={styles.todosCont}>
+    {
+      todos.map((todo,index) => {
+        const [lines,setLines] = React.useState(2)
+        const toggleLines = () => {
+          if (lines === 2) {
+            setLines(50)
+          } else {
+            setLines(2)
+          }
+        }
+        if (index > 1) {
+          return
+        }
+        return (
+          <Pressable onPress={() => toggleLines()} onLongPress={() => console.log("Long press")} style={{...styles.todo, backgroundColor: todo.color}} key={todo.key}>
+            <View style={styles.todoIconCont}>
+              <Image
+                source={todo.icon}
+                style={styles.todoIcon}
+              />
+            </View>
+            <View style={styles.todoInfoCont}>
+              <Text numberOfLines={1} style={styles.todoInfoTitle}>{todo.title}</Text>
+              <Text numberOfLines={lines} style={styles.todoInfoDesc}>{todo.description}</Text>
+            </View>
+          </Pressable>
+        );
+      })
+    }
+    </View>
+  );
 }
 
 const ProgressCard = ({ title, progress}) => {
@@ -189,7 +236,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   todo: {
-    height: 90,
+    // height: 90,
+    paddingVertical: 10,
     elevation: 5,
     backgroundColor: "#2ADFEB",
     marginBottom: 10,
@@ -205,15 +253,16 @@ const styles = StyleSheet.create({
   },
   todoIconCont: {
     marginLeft: 13,
-
+    borderWidth: 1.5,
+    borderRadius: 35,
+    overflow: "hidden",
+    borderColor: "#0720FE",
   },
   todoIcon: {
     width: 70,
     height: 70,
-    borderWidth: 1.5,
-    borderRadius: 35,
-    borderColor: "#0720FE",
-    backgroundColor: "#1EE36D"
+    backgroundColor: "#fffa",
+    resizeMode: "contain"
   },
   todoInfoCont: {
     flexDirection: "column",
