@@ -119,7 +119,7 @@ const TodoContainer = ({ todos }) => {
               />
             </View>
             <View style={styles.todoInfoCont}>
-              <Text numberOfLines={1} style={styles.todoInfoTitle}>{todo.title}</Text>
+              <Text numberOfLines={lines - 1} style={styles.todoInfoTitle}>{todo.title}</Text>
               <Text numberOfLines={lines} style={styles.todoInfoDesc}>{todo.description}</Text>
             </View>
           </Pressable>
@@ -252,16 +252,21 @@ const styles = StyleSheet.create({
 		shadowOffset: { width: 2, height: 2 },
   },
   todoIconCont: {
-    marginLeft: 13,
-    borderWidth: 1.5,
-    borderRadius: 35,
-    overflow: "hidden",
-    borderColor: "#0720FE",
+
+      width: 80,
+      height: 80,
+      alignItems: "center",
+      justifyContent: "center",
+      marginLeft: 13,
+      borderWidth: 1.5,
+      borderRadius: 40,
+      overflow: "hidden",
+      borderColor: "#0720FE",
+      backgroundColor: "#fffa",
   },
   todoIcon: {
-    width: 70,
-    height: 70,
-    backgroundColor: "#fffa",
+    width: 60,
+    height: 60,
     resizeMode: "contain"
   },
   todoInfoCont: {
