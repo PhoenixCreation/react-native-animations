@@ -1,5 +1,7 @@
 import React from 'react'
-import { StyleSheet, Text, View, ScrollView, Image, Pressable, TextInput, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Image, Pressable, TextInput, KeyboardAvoidingView, Button } from 'react-native';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 
 const LINE_COLOR = "#C87C35"
 const ICONS = [
@@ -64,6 +66,13 @@ function TaskListAdd({ route, navigation }) {
   const [todoDescription,setTodoDescription] = React.useState("")
   const [todoIcon, setTodoIcon] = React.useState(ICONS[0].icon)
   const [todoColor, setTodoColor] = React.useState(COLORS[0].color)
+  const [todoDate,setTodoDate] = React.useState(new Date())
+  const [todoTime,setTodoTime] = React.useState(new Date())
+
+
+  const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
+  const [isTimePickerVisible, setTimePickerVisibility] = React.useState(false);
+
 
   const [lines,setLines] = React.useState(2)
   const toggleLines = () => {
@@ -73,10 +82,18 @@ function TaskListAdd({ route, navigation }) {
       setLines(2)
     }
   }
+  const handleConfirm = (date) => {
+    setTodoDate(date)
+    setDatePickerVisibility(false)
+  };
+  const handleConfirmTime = (time) => {
+    setTodoTime(time)
+    setTimePickerVisibility(false)
+  }
 
   return (
     <KeyboardAvoidingView style={styles.app}>
-      <ScrollView style={styles.app}>
+      <ScrollView style={styles.app} showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.headerCont}>
             <View style={styles.profileImageCont}>
@@ -234,8 +251,49 @@ function TaskListAdd({ route, navigation }) {
               }
             </View>
           </View>
+          <View style={{ flexDirection: "row", marginTop: 15, alignItems: "center"}}>
+            <Text style={{ fontSize: 24}}>Date:</Text>
+            <View style={{paddingLeft: 10, flexDirection: "row", justifyContent: "center", alignItems: "center", borderColor: LINE_COLOR, borderRadius: 15, height: 50, borderWidth: 2, flex: 1, marginLeft: 15}}>
+              <Text style={{ fontSize: 20, flex: 1}}>{todoDate.getDate() + "-" + (todoDate.getMonth()+ 1) + "-" + todoDate.getFullYear()}</Text>
+              <Pressable
+                onPress={() => setDatePickerVisibility(true)}
+                style={{
+                  marginRight: 15
+                }}
+              >
+                <FontAwesome name="calendar" size={24} color="black" />
+              </Pressable>
+              <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                onConfirm={handleConfirm}
+                onCancel={() => setDatePickerVisibility(false)}
+              />
+            </View>
+          </View>
+          <View style={{ flexDirection: "row", marginTop: 15, alignItems: "center"}}>
+            <Text style={{ fontSize: 24}}>Time:</Text>
+            <View style={{paddingLeft: 10, flexDirection: "row", justifyContent: "center", alignItems: "center", borderColor: LINE_COLOR, borderRadius: 15, height: 50, borderWidth: 2, flex: 1, marginLeft: 15}}>
+              <Text style={{ fontSize: 20, flex: 1}}>{todoTime.getHours() + ":" + todoTime.getMinutes()}</Text>
+              <Pressable
+                onPress={() => setTimePickerVisibility(true)}
+                style={{
+                  marginRight: 15
+                }}
+              >
+                <Ionicons name="md-clock" size={30} color="black" />
+              </Pressable>
+              <DateTimePickerModal
+                isVisible={isTimePickerVisible}
+                mode="time"
+                onConfirm={handleConfirmTime}
+                onCancel={() => setTimePickerVisibility(false)}
+              />
+            </View>
+          </View>
 
         </View>
+        {/* PREVIEW */}
         <View style={styles.container}>
           <Text style={{ fontSize: 24, marginBottom: 10}}>Preview:</Text>
           <Pressable onPress={() => toggleLines()} style={{...styles.todo, backgroundColor: todoColor}}>
