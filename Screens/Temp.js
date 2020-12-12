@@ -32,7 +32,7 @@ function Temp() {
   // React.useEffect(() => {
   //   var data = {
   //     PROFILE_INFO: {
-  //       image: "https://phoenixcreation2.herokuapp.com/static/logomain.png",
+  //       image: "https://picsum.photos/200",
   //       name: {
   //         first: "Phoenix",
   //         last: "Creation",

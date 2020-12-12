@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View, Image, ScrollView, Pressable, Button } from 'react-native';
 import { Svg, Circle } from "react-native-svg"
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SharedElement } from "react-navigation-shared-element";
 
 
 function TaskListHome({ navigation }) {
@@ -43,10 +44,15 @@ function TaskListHome({ navigation }) {
       }
       data.TODOS = temp
       storeData(data)
+      refreshData()
     })
   }
 
   React.useEffect(() => {
+    refreshData()
+  },[])
+
+  const refreshData = () => {
     getData().then((data) => {
       if (data !== null) {
 
@@ -58,7 +64,7 @@ function TaskListHome({ navigation }) {
         console.log("no data found....????");
       }
     })
-  },[])
+  }
 
   if (loading) {
     return (
@@ -73,13 +79,17 @@ function TaskListHome({ navigation }) {
       <View style={styles.container}>
         <View style={styles.headerCont}>
           <View style={styles.profileImageCont}>
+            <SharedElement id="profileimage">
             <Image
               source={{ uri: PROFILE_INFO.image }}
               style={styles.profileImage}
             />
+            </SharedElement>
           </View>
           <View style={styles.headerNameCont}>
-            <Text style={styles.profileName}>{PROFILE_INFO.name.first}</Text>
+            <SharedElement id="profilename">
+              <Text style={styles.profileName}>{PROFILE_INFO.name.first}</Text>
+            </SharedElement>
             <Text style={styles.todosCount}>{"Total Todos: " + Todos.length}</Text>
           </View>
         </View>
@@ -90,10 +100,10 @@ function TaskListHome({ navigation }) {
       <View style={{...styles.container, paddingVertical: 22}}>
         <View style={styles.buttonsCont}>
           <Pressable onPress={() => navigation.navigate("TaskListAdd", { type: "normal", PROFILE_INFO})} style={styles.button}>
-            <Text style={styles.buttonText}>Create Todo</Text>
+              <Text style={styles.buttonText}>Create Todo</Text>
           </Pressable>
           <Pressable onPress={() => navigation.navigate("TaskListAdd", { type: "important", PROFILE_INFO})} style={{...styles.button, marginRight: 0, backgroundColor: "#1324C2"}}>
-            <Text style={{ ...styles.buttonText, color: "white", fontSize: 15}}>Important Todo</Text>
+              <Text style={{ ...styles.buttonText, color: "white", fontSize: 15}}>Important Todo</Text>
           </Pressable>
         </View>
       </View>
@@ -137,25 +147,26 @@ const TodoContainer = ({ todos, removeTodo }) => {
 
         return (
           <Pressable onPress={() => toggleLines()} onLongPress={() => console.log("Long press")} style={{...styles.todo, backgroundColor: todo.color}} key={todo.key}>
-            <View>
+            <View style={{ flexDirection: "row", alignItems: "center"}}>
               <View style={styles.todoIconCont}>
                 <Image
                   source={todo.icon}
                   style={styles.todoIcon}
                 />
               </View>
-              {
-                lines !== 2 && <Button
-                title="Remove"
-                onPress={() => removeTodo(todo.key)}
-                />
-              }
 
+              <View style={styles.todoInfoCont}>
+                <Text numberOfLines={lines - 1} style={styles.todoInfoTitle}>{todo.title}</Text>
+                <Text numberOfLines={lines} style={styles.todoInfoDesc}>{todo.description}</Text>
+              </View>
             </View>
-            <View style={styles.todoInfoCont}>
-              <Text numberOfLines={lines - 1} style={styles.todoInfoTitle}>{todo.title}</Text>
-              <Text numberOfLines={lines} style={styles.todoInfoDesc}>{todo.description}</Text>
-            </View>
+            {
+              lines !== 2 && <Pressable onPress={() => removeTodo(todo.key)} style={{ marginTop: 10}}>
+                <View style={{ borderRadius: 10, height: 40, backgroundColor: "#dd1321", alignItems: "center", justifyContent: "center", padding: 15}}>
+                  <Text style={{ color: "white", fontSize: 18}}>Done ?</Text>
+                </View>
+              </Pressable>
+            }
           </Pressable>
         );
       })
@@ -236,7 +247,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     shadowColor: "black",
     elevation: 30,
-    borderRadius: 50,
+    borderRadius: 100,
     borderColor: "#0720FEAA",
     borderWidth: 3,
     overflow: "hidden",
@@ -250,6 +261,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     backgroundColor: "orange",
+    borderRadius: 50,
   },
   headerNameCont: {
     flexDirection: "column",
@@ -277,7 +289,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 25,
     borderWidth: 1,
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
 
 		shadowColor: 'black',

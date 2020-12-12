@@ -3,6 +3,10 @@ import { StyleSheet, Text, View, ScrollView, Image, Pressable, TextInput, Keyboa
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SharedElement } from "react-navigation-shared-element";
+import * as Animatable from 'react-native-animatable';
+const AnimatableTextInput = Animatable.createAnimatableComponent(TextInput);
+const AnimatableScrollView = Animatable.createAnimatableComponent(ScrollView);
 
 const LINE_COLOR = "#C87C35"
 const ICONS = [
@@ -57,6 +61,15 @@ const COLORS = [
     color: "#C4C4C4",
   },
 ]
+
+const typeTitle = {
+  0: { opacity: 0, translateY: -50},
+  1: { opacity: 1, translateY: 0},
+}
+const typeType = {
+  0: { opacity: 0, translateX: 300},
+  1: { opacity: 1, translateX: 0},
+}
 
 function TaskListAdd({ route, navigation }) {
 
@@ -129,7 +142,9 @@ function TaskListAdd({ route, navigation }) {
       todos.push(currentTodo)
       data.TODOS = todos
       storeData(data)
+
       console.log("done");
+      navigation.navigate("TaskListHome")
     })
   }
 
@@ -139,31 +154,60 @@ function TaskListAdd({ route, navigation }) {
         <View style={styles.container}>
           <View style={styles.headerCont}>
             <View style={styles.profileImageCont}>
+              <SharedElement id="profileimage" style={{ backgroundColor: "orange"}}>
               <Image
                 source={{ uri: PROFILE_INFO.image }}
                 style={styles.profileImage}
               />
+              </SharedElement>
             </View>
             <View style={styles.headerNameCont}>
-              <Text style={styles.profileName}>{PROFILE_INFO.name.first}</Text>
+              <SharedElement id="profilename">
+                <Text style={styles.profileName}>{PROFILE_INFO.name.first}</Text>
+              </SharedElement>
             </View>
           </View>
         </View>
         <View style={{...styles.container, flexDirection: "column"}}>
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
-            <Text style={{ fontSize: 24}}>Type:</Text>
-            <View style={{ flexDirection: "row"}}>
+            <Animatable.Text
+              useNativeDriver
+              animation={typeTitle}
+              duration={400}
+              delay={500}
+              style={{ fontSize: 24}}
+            >
+              Type:
+            </Animatable.Text>
+            <Animatable.View
+              useNativeDriver
+              animation={typeType}
+              duration={400}
+              delay={700}
+              style={{ flexDirection: "row"}}
+            >
               <Pressable onPress={() => setTodoType("normal")} style={{ borderColor: LINE_COLOR, backgroundColor: todoType === "normal" ? "#27f7f3" : "white", borderWidth: 2, borderRadius: 15, height: 50, width: 100, marginRight: 3, justifyContent: "center", alignItems: "center"}}>
                 <Text style={{ fontSize: 18, color: todoType === "normal" ? "black" : "#27f7f3"}}>Normal</Text>
               </Pressable>
               <Pressable onPress={() => setTodoType("important")} style={{ borderColor: LINE_COLOR, backgroundColor: todoType === "important" ? "#f02121" : "white", borderWidth: 2, borderRadius: 15, height: 50, width: 100, justifyContent: "center", alignItems: "center"}}>
                 <Text style={{ fontSize: 16, color: todoType === "important" ? "white" : "#f02121"}}>Important</Text>
               </Pressable>
-            </View>
+            </Animatable.View>
           </View>
           <View style={{ flexDirection: "column", marginTop: 15}}>
-            <Text style={{ fontSize: 24}}>Title:</Text>
-            <TextInput
+            <Animatable.Text
+              useNativeDriver
+              animation={typeTitle}
+              duration={400}
+              delay={900}
+              style={{ fontSize: 24}}
+            >
+              Title:
+            </Animatable.Text>
+            <AnimatableTextInput
+              animation={typeType}
+              duration={500}
+              delay={1000}
               value={todoTitle}
               onChangeText={ text => setTodoTitle(text)}
               style={{
@@ -180,8 +224,19 @@ function TaskListAdd({ route, navigation }) {
             />
           </View>
           <View style={{ flexDirection: "column", marginTop: 15}}>
-            <Text style={{ fontSize: 24}}>Description:</Text>
-            <TextInput
+            <Animatable.Text
+              useNativeDriver
+              animation={typeTitle}
+              duration={400}
+              delay={1100}
+              style={{ fontSize: 24}}
+            >
+              Description:
+            </Animatable.Text>
+            <AnimatableTextInput
+              animation={typeType}
+              duration={500}
+              delay={1200}
               value={todoDescription}
               onChangeText={text => setTodoDescription(text)}
               style={{
@@ -201,8 +256,19 @@ function TaskListAdd({ route, navigation }) {
             />
           </View>
           <View style={{ flexDirection: "column", marginTop: 15}}>
-            <Text style={{ fontSize: 24}}>Icon:</Text>
-            <ScrollView
+            <Animatable.Text
+              useNativeDriver
+              animation={typeTitle}
+              duration={400}
+              delay={1300}
+              style={{ fontSize: 24}}
+            >
+              Icon:
+            </Animatable.Text>
+            <AnimatableScrollView
+              animation={typeType}
+              duration={500}
+              delay={1400}
               horizontal
               showsHorizontalScrollIndicator={false}
               style={{
@@ -253,11 +319,22 @@ function TaskListAdd({ route, navigation }) {
                 })
               }
             </View>
-            </ScrollView>
+            </AnimatableScrollView>
           </View>
           <View style={{ flexDirection: "column", marginTop: 15}}>
-            <Text style={{ fontSize: 24}}>Color:</Text>
-            <View
+            <Animatable.Text
+              useNativeDriver
+              animation={typeTitle}
+              duration={400}
+              delay={1500}
+              style={{ fontSize: 24}}
+            >
+              Color:
+            </Animatable.Text>
+            <Animatable.View
+              animation={typeType}
+              duration={500}
+              delay={1600}
               style={{
                 borderRadius: 15,
                 borderColor: LINE_COLOR,
@@ -291,11 +368,24 @@ function TaskListAdd({ route, navigation }) {
                   );
                 })
               }
-            </View>
+            </Animatable.View>
           </View>
           <View style={{ flexDirection: "row", marginTop: 15, alignItems: "center"}}>
-            <Text style={{ fontSize: 24}}>Date:</Text>
-            <View style={{paddingLeft: 10, flexDirection: "row", justifyContent: "center", alignItems: "center", borderColor: LINE_COLOR, borderRadius: 15, height: 50, borderWidth: 2, flex: 1, marginLeft: 15}}>
+            <Animatable.Text
+              useNativeDriver
+              animation={typeTitle}
+              duration={400}
+              delay={1700}
+              style={{ fontSize: 24}}
+            >
+              Date:
+            </Animatable.Text>
+            <Animatable.View
+              animation={typeType}
+              duration={500}
+              delay={1800}
+              style={{paddingLeft: 10, flexDirection: "row", justifyContent: "center", alignItems: "center", borderColor: LINE_COLOR, borderRadius: 15, height: 50, borderWidth: 2, flex: 1, marginLeft: 15}}
+            >
               <Text style={{ fontSize: 20, flex: 1}}>{todoDate.getDate() + "-" + (todoDate.getMonth()+ 1) + "-" + todoDate.getFullYear()}</Text>
               <Pressable
                 onPress={() => setDatePickerVisibility(true)}
@@ -311,11 +401,24 @@ function TaskListAdd({ route, navigation }) {
                 onConfirm={handleConfirm}
                 onCancel={() => setDatePickerVisibility(false)}
               />
-            </View>
+            </Animatable.View>
           </View>
           <View style={{ flexDirection: "row", marginTop: 15, alignItems: "center"}}>
-            <Text style={{ fontSize: 24}}>Time:</Text>
-            <View style={{paddingLeft: 10, flexDirection: "row", justifyContent: "center", alignItems: "center", borderColor: LINE_COLOR, borderRadius: 15, height: 50, borderWidth: 2, flex: 1, marginLeft: 15}}>
+            <Animatable.Text
+              useNativeDriver
+              animation={typeTitle}
+              duration={400}
+              delay={1900}
+              style={{ fontSize: 24}}
+            >
+              Time:
+            </Animatable.Text>
+            <Animatable.View
+              animation={typeType}
+              duration={500}
+              delay={2000}
+              style={{paddingLeft: 10, flexDirection: "row", justifyContent: "center", alignItems: "center", borderColor: LINE_COLOR, borderRadius: 15, height: 50, borderWidth: 2, flex: 1, marginLeft: 15}}
+            >
               <Text style={{ fontSize: 20, flex: 1}}>{todoTime.getHours() + ":" + todoTime.getMinutes()}</Text>
               <Pressable
                 onPress={() => setTimePickerVisibility(true)}
@@ -331,13 +434,21 @@ function TaskListAdd({ route, navigation }) {
                 onConfirm={handleConfirmTime}
                 onCancel={() => setTimePickerVisibility(false)}
               />
-            </View>
+            </Animatable.View>
           </View>
 
         </View>
         {/* PREVIEW */}
         <View style={styles.container}>
-          <Text style={{ fontSize: 24, marginBottom: 10}}>Preview:</Text>
+          <Animatable.Text
+            useNativeDriver
+            animation={typeTitle}
+            duration={400}
+            delay={2000}
+            style={{ fontSize: 24, marginBottom: 10}}
+          >
+            Preview:
+          </Animatable.Text>
           <Pressable onPress={() => toggleLines()} style={{...styles.todo, backgroundColor: todoColor}}>
             <View style={styles.todoIconCont}>
               <Image
@@ -352,9 +463,9 @@ function TaskListAdd({ route, navigation }) {
           </Pressable>
         </View>
         <View style={styles.container}>
-          <Pressable onPress={() => addTodo()}>
-            <View style={{ width: 100, height: 50, alignItems: "center", justifyContent: "center", backgroundColor: "lightblue"}}>
-              <Text>Add</Text>
+          <Pressable onPress={() => addTodo()} style={{ alignSelf: "center"}}>
+            <View style={{ width: 100, height: 50, alignItems: "center", justifyContent: "center", backgroundColor: "gold"}}>
+              <Text style={{ color: "blue", fontSize: 20}}>Add</Text>
             </View>
           </Pressable>
         </View>
@@ -376,7 +487,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   profileImageCont: {
-    backgroundColor: "white",
+    backgroundColor: "orange",
     shadowColor: "black",
     borderRadius: 50,
     borderColor: "#0720FEAA",
@@ -392,6 +503,7 @@ const styles = StyleSheet.create({
     width: 65,
     height: 65,
     backgroundColor: "orange",
+    borderRadius: 65,
   },
   headerNameCont: {
     flexDirection: "column",
@@ -457,5 +569,19 @@ const styles = StyleSheet.create({
     textAlign: "justify"
   },
 })
+
+TaskListAdd.sharedElements = (route, otherroute, showing) => {
+  return [
+    {
+      id: `profileimage`
+    },
+    {
+      id: `profilename`
+    },
+    // {
+    //   id: `item.${car.key}.image`
+    // },
+  ];
+}
 
 export default TaskListAdd
