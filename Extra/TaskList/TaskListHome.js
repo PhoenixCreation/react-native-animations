@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, Image, ScrollView, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, Pressable, Button } from 'react-native';
 import { Svg, Circle } from "react-native-svg"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -8,6 +8,15 @@ function TaskListHome({ navigation }) {
   const [loading,setLoading] = React.useState(true)
   const [PROFILE_INFO,setPROFILE_INFO] = React.useState({})
   const [Todos,setTodos] = React.useState({})
+
+  const storeData = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('@TodoApp', jsonValue)
+    } catch (e) {
+      // saving error
+    }
+  }
 
   const getData = async () => {
     try {
@@ -18,10 +27,29 @@ function TaskListHome({ navigation }) {
     }
   }
 
+  const removeTodo = (key) => {
+    getData().then((prevdata) => {
+      let data = prevdata
+      let todos = data.TODOS
+      let temp = []
+      for (var i = 0; i < todos.length; i++) {
+        if(todos[i].key !== key){
+          temp.push(todos[i])
+        }else{
+          let doner = todos[i]
+          doner.done = true
+          temp.push(doner)
+        }
+      }
+      data.TODOS = temp
+      storeData(data)
+    })
+  }
 
   React.useEffect(() => {
     getData().then((data) => {
       if (data !== null) {
+
         setPROFILE_INFO(data.PROFILE_INFO)
         setTodos(data.TODOS)
         setLoading(false)
@@ -52,12 +80,12 @@ function TaskListHome({ navigation }) {
           </View>
           <View style={styles.headerNameCont}>
             <Text style={styles.profileName}>{PROFILE_INFO.name.first}</Text>
-            <Text style={styles.todosCount}>{"Total Todos: " + 15}</Text>
+            <Text style={styles.todosCount}>{"Total Todos: " + Todos.length}</Text>
           </View>
         </View>
       </View>
       <View style={{...styles.container, paddingVertical: 22}}>
-        <TodoContainer todos={Todos} />
+        <TodoContainer todos={Todos} removeTodo={removeTodo}/>
       </View>
       <View style={{...styles.container, paddingVertical: 22}}>
         <View style={styles.buttonsCont}>
@@ -86,7 +114,7 @@ function TaskListHome({ navigation }) {
   )
 }
 
-const TodoContainer = ({ todos }) => {
+const TodoContainer = ({ todos, removeTodo }) => {
 
   if(todos.length === 0){
     return <View><Text>Start Adding todos to view them here..</Text></View>
@@ -103,14 +131,26 @@ const TodoContainer = ({ todos }) => {
             setLines(2)
           }
         }
-        
+        if (todo.done) {
+          return
+        }
+
         return (
           <Pressable onPress={() => toggleLines()} onLongPress={() => console.log("Long press")} style={{...styles.todo, backgroundColor: todo.color}} key={todo.key}>
-            <View style={styles.todoIconCont}>
-              <Image
-                source={todo.icon}
-                style={styles.todoIcon}
-              />
+            <View>
+              <View style={styles.todoIconCont}>
+                <Image
+                  source={todo.icon}
+                  style={styles.todoIcon}
+                />
+              </View>
+              {
+                lines !== 2 && <Button
+                title="Remove"
+                onPress={() => removeTodo(todo.key)}
+                />
+              }
+
             </View>
             <View style={styles.todoInfoCont}>
               <Text numberOfLines={lines - 1} style={styles.todoInfoTitle}>{todo.title}</Text>
