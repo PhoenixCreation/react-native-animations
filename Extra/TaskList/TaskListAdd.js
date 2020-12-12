@@ -464,7 +464,7 @@ function TaskListAdd({ route, navigation }) {
         </View>
         <View style={styles.container}>
           <Pressable onPress={() => addTodo()} style={{ alignSelf: "center"}}>
-            <View style={{ width: 100, height: 50, alignItems: "center", justifyContent: "center", backgroundColor: "gold"}}>
+            <View style={{ borderRadius:15, borderColor: "black", borderWidth: 1, width: 100, height: 50, alignItems: "center", justifyContent: "center", backgroundColor: "gold"}}>
               <Text style={{ color: "blue", fontSize: 20}}>Add</Text>
             </View>
           </Pressable>

@@ -116,14 +116,14 @@ function TaskListHome({ navigation }) {
         </View>
       </View>
       <View style={{...styles.container, paddingVertical: 22, flexDirection: "row", justifyContent: "center"}}>
-        <View style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, marginRight: 10, backgroundColor: "red"}}>
-          <Feather name="facebook" size={24} color="black" />
+        <View style={{ alignItems: "center", justifyContent: "center", width: 50, height: 50, borderRadius: 25, borderWidth: 1, marginRight: 10, backgroundColor: "white", elevation: 10}}>
+          <Feather name="facebook" size={24} color="#3b5998" />
         </View>
-        <View style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, marginRight: 10, backgroundColor: "red"}}>
+        <View style={{ alignItems: "center", justifyContent: "center", width: 50, height: 50, borderRadius: 25, borderWidth: 1, marginRight: 10, backgroundColor: "white", elevation: 10}}>
           <AntDesign name="google" size={24} color="black" />
         </View>
-        <View style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, marginRight: 0, backgroundColor: "red"}}>
-          <Feather name="twitter" size={24} color="black" />
+        <View style={{ alignItems: "center", justifyContent: "center", width: 50, height: 50, borderRadius: 25, borderWidth: 1, marginRight: 0, backgroundColor: "white", elevation: 10}}>
+          <Feather name="twitter" size={24} color="blue" />
         </View>
       </View>
     </ScrollView>
