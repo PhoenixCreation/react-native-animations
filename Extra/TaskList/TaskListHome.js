@@ -1,49 +1,45 @@
 import React from 'react'
 import { StyleSheet, Text, View, Image, ScrollView, Pressable } from 'react-native';
 import { Svg, Circle } from "react-native-svg"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Todos = [
-  {
-    key: 1,
-    title: "Title of todo",
-    description: "Description of the first todo and it should be only two lines of content",
-    icon: require("../../assets/adaptive-icon.png"),
-    color: "#2ADFEB",
-    done: false,
-    time: new Date().toUTCString(),
-
-  },
-  {
-    key: 2,
-    title: "Title of todo",
-    description: "Description of the first todo and it should be only two lines of content",
-    icon: { uri: "https://picsum.photos/200"},
-    color: "#2AEB54",
-    done: false,
-    time: new Date().toUTCString(),
-
-  },
-  {
-    key: 3,
-    title: "Title of todo",
-    description: "Description of the first todo and it should be only two lines of content",
-    icon: require("../../assets/adaptive-icon.png"),
-    color: "#2ADFEB",
-    done: false,
-    time: new Date().toUTCString(),
-
-  },
-]
-const PROFILE_INFO = {
-  image: "https://phoenixcreation2.herokuapp.com/static/logomain.png",
-  name: {
-    first: "Phoenix",
-    last: "Creation",
-  },
-  todos: 15,
-}
 
 function TaskListHome({ navigation }) {
+  const [loading,setLoading] = React.useState(true)
+  const [PROFILE_INFO,setPROFILE_INFO] = React.useState({})
+  const [Todos,setTodos] = React.useState({})
+
+  const getData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('@TodoApp')
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+    } catch(e) {
+      // error reading value
+    }
+  }
+
+
+  React.useEffect(() => {
+    getData().then((data) => {
+      if (data !== null) {
+        setPROFILE_INFO(data.PROFILE_INFO)
+        setTodos(data.TODOS)
+        setLoading(false)
+      }
+      else{
+        console.log("no data found....????");
+      }
+    })
+  },[])
+
+  if (loading) {
+    return (
+      <View>
+      <Text>App is loading...</Text>
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.app} showsVerticalScrollIndicator={false}>
       <View style={styles.container}>
@@ -93,7 +89,7 @@ function TaskListHome({ navigation }) {
 const TodoContainer = ({ todos }) => {
 
   if(todos.length === 0){
-    return <View><Text>Start Adding todos to show them here..</Text></View>
+    return <View><Text>Start Adding todos to view them here..</Text></View>
   }
   return (
     <View style={styles.todosCont}>
@@ -107,9 +103,7 @@ const TodoContainer = ({ todos }) => {
             setLines(2)
           }
         }
-        if (index > 1) {
-          return
-        }
+        
         return (
           <Pressable onPress={() => toggleLines()} onLongPress={() => console.log("Long press")} style={{...styles.todo, backgroundColor: todo.color}} key={todo.key}>
             <View style={styles.todoIconCont}>

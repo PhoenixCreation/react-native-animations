@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View, ScrollView, Image, Pressable, TextInput, KeyboardAvoidingView, Button } from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LINE_COLOR = "#C87C35"
 const ICONS = [
@@ -58,6 +59,25 @@ const COLORS = [
 ]
 
 function TaskListAdd({ route, navigation }) {
+
+  const storeData = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('@TodoApp', jsonValue)
+    } catch (e) {
+      // saving error
+    }
+  }
+
+  const getData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('@TodoApp')
+      return jsonValue != null ? JSON.parse(jsonValue) : null;
+    } catch(e) {
+      // error reading value
+    }
+  }
+
   const { type } = route.params
   const { PROFILE_INFO } = route.params
 
@@ -89,6 +109,28 @@ function TaskListAdd({ route, navigation }) {
   const handleConfirmTime = (time) => {
     setTodoTime(time)
     setTimePickerVisibility(false)
+  }
+
+  const addTodo = () => {
+    getData().then((prevdata) => {
+      let data = prevdata
+      let todos = prevdata.TODOS
+      let currentTodo = {
+        key: todos.length + 1,
+        title: todoTitle,
+        description: todoDescription,
+        type: todoType,
+        icon: todoIcon,
+        color: todoColor,
+        date: todoDate,
+        time: todoTime,
+        done: false
+      }
+      todos.push(currentTodo)
+      data.TODOS = todos
+      storeData(data)
+      console.log("done");
+    })
   }
 
   return (
@@ -306,6 +348,13 @@ function TaskListAdd({ route, navigation }) {
             <View style={styles.todoInfoCont}>
               <Text numberOfLines={lines - 1} style={styles.todoInfoTitle}>{todoTitle}</Text>
               <Text numberOfLines={lines} style={styles.todoInfoDesc}>{todoDescription}</Text>
+            </View>
+          </Pressable>
+        </View>
+        <View style={styles.container}>
+          <Pressable onPress={() => addTodo()}>
+            <View style={{ width: 100, height: 50, alignItems: "center", justifyContent: "center", backgroundColor: "lightblue"}}>
+              <Text>Add</Text>
             </View>
           </Pressable>
         </View>
