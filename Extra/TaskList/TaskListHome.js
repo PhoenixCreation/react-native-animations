@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, ScrollView, Pressable, Button } from 're
 import { Svg, Circle } from "react-native-svg"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SharedElement } from "react-navigation-shared-element";
-
+import { Feather, AntDesign } from '@expo/vector-icons';
 
 function TaskListHome({ navigation }) {
   const [loading,setLoading] = React.useState(true)
@@ -116,9 +116,15 @@ function TaskListHome({ navigation }) {
         </View>
       </View>
       <View style={{...styles.container, paddingVertical: 22, flexDirection: "row", justifyContent: "center"}}>
-        <View style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, marginRight: 10, backgroundColor: "red"}}></View>
-        <View style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, marginRight: 10, backgroundColor: "red"}}></View>
-        <View style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, marginRight: 0, backgroundColor: "red"}}></View>
+        <View style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, marginRight: 10, backgroundColor: "red"}}>
+          <Feather name="facebook" size={24} color="black" />
+        </View>
+        <View style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, marginRight: 10, backgroundColor: "red"}}>
+          <AntDesign name="google" size={24} color="black" />
+        </View>
+        <View style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, marginRight: 0, backgroundColor: "red"}}>
+          <Feather name="twitter" size={24} color="black" />
+        </View>
       </View>
     </ScrollView>
   )
