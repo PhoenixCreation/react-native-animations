@@ -71,7 +71,15 @@ const typeType = {
   1: { opacity: 1, translateX: 0},
 }
 
+const colorBackground = {
+  0: { scale: 0.02,borderRadius: 300},
+  0.67: { scale: 2,borderRadius: 100},
+  1: { scale: 1,borderRadius: 30},
+}
+
 function TaskListAdd({ route, navigation }) {
+
+  const colorAnimator = React.useRef()
 
   const storeData = async (value) => {
     try {
@@ -154,7 +162,7 @@ function TaskListAdd({ route, navigation }) {
         <View style={styles.container}>
           <View style={styles.headerCont}>
             <View style={styles.profileImageCont}>
-              <SharedElement id="profileimage" style={{ backgroundColor: "orange"}}>
+              <SharedElement id="profileimage">
               <Image
                 source={{ uri: PROFILE_INFO.image }}
                 style={styles.profileImage}
@@ -165,10 +173,26 @@ function TaskListAdd({ route, navigation }) {
               <SharedElement id="profilename">
                 <Text style={styles.profileName}>{PROFILE_INFO.name.first}</Text>
               </SharedElement>
+                <Text style={{ ...styles.profileName, fontSize: 30}}>{PROFILE_INFO.name.last}</Text>
             </View>
           </View>
         </View>
         <View style={{...styles.container, flexDirection: "column"}}>
+          <Animatable.View
+            ref={colorAnimator}
+            style={{
+              position: "absolute",
+              backgroundColor: todoColor + "33",
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              zIndex:-10,
+              borderRadius: 30,
+              zIndex: -10,
+            }}
+          >
+          </Animatable.View>
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
             <Animatable.Text
               useNativeDriver
@@ -350,7 +374,10 @@ function TaskListAdd({ route, navigation }) {
                 COLORS.map((color,i) => {
                   return (
                     <Pressable
-                      onPress={() => setTodoColor(color.color)}
+                      onPress={() => {
+                        setTodoColor(color.color)
+                        colorAnimator.current.animate(colorBackground)
+                      }}
                       key={color.key}
                       style={{
                         height: 40,
@@ -436,7 +463,6 @@ function TaskListAdd({ route, navigation }) {
               />
             </Animatable.View>
           </View>
-
         </View>
         {/* PREVIEW */}
         <View style={styles.container}>
@@ -487,7 +513,6 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   profileImageCont: {
-    backgroundColor: "orange",
     shadowColor: "black",
     borderRadius: 50,
     borderColor: "#0720FEAA",
