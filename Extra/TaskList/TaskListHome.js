@@ -1,75 +1,81 @@
-import React from 'react'
-import { StyleSheet, Text, View, Image, ScrollView, Pressable, Button } from 'react-native';
-import { Svg, Circle } from "react-native-svg"
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ScrollView,
+  Pressable,
+  Button,
+} from "react-native";
+import { Svg, Circle } from "react-native-svg";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SharedElement } from "react-navigation-shared-element";
-import { Feather, AntDesign } from '@expo/vector-icons';
+import { Feather, AntDesign } from "@expo/vector-icons";
 
 function TaskListHome({ navigation }) {
-  const [loading,setLoading] = React.useState(true)
-  const [PROFILE_INFO,setPROFILE_INFO] = React.useState({})
-  const [Todos,setTodos] = React.useState({})
+  const [loading, setLoading] = React.useState(true);
+  const [PROFILE_INFO, setPROFILE_INFO] = React.useState({});
+  const [Todos, setTodos] = React.useState({});
 
   const storeData = async (value) => {
     try {
-      const jsonValue = JSON.stringify(value)
-      await AsyncStorage.setItem('@TodoApp', jsonValue)
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem("@TodoApp", jsonValue);
     } catch (e) {
       // saving error
     }
-  }
+  };
 
   const getData = async () => {
     try {
-      const jsonValue = await AsyncStorage.getItem('@TodoApp')
+      const jsonValue = await AsyncStorage.getItem("@TodoApp");
       return jsonValue != null ? JSON.parse(jsonValue) : null;
-    } catch(e) {
+    } catch (e) {
       // error reading value
     }
-  }
+  };
 
   const removeTodo = (key) => {
     getData().then((prevdata) => {
-      let data = prevdata
-      let todos = data.TODOS
-      let temp = []
+      let data = prevdata;
+      let todos = data.TODOS;
+      let temp = [];
       for (var i = 0; i < todos.length; i++) {
-        if(todos[i].key !== key){
-          temp.push(todos[i])
-        }else{
-          let doner = todos[i]
-          doner.done = true
-          temp.push(doner)
+        if (todos[i].key !== key) {
+          temp.push(todos[i]);
+        } else {
+          let doner = todos[i];
+          doner.done = true;
+          temp.push(doner);
         }
       }
-      data.TODOS = temp
-      storeData(data)
-      refreshData()
-    })
-  }
+      data.TODOS = temp;
+      storeData(data);
+      refreshData();
+    });
+  };
 
   React.useEffect(() => {
-    refreshData()
-  },[])
+    refreshData();
+  }, []);
 
   const refreshData = () => {
     getData().then((data) => {
       if (data !== null) {
-
-        setPROFILE_INFO(data.PROFILE_INFO)
-        setTodos(data.TODOS)
-        setLoading(false)
-      }
-      else{
+        setPROFILE_INFO(data.PROFILE_INFO);
+        setTodos(data.TODOS);
+        setLoading(false);
+      } else {
         console.log("no data found....????");
       }
-    })
-  }
+    });
+  };
 
   if (loading) {
     return (
       <View>
-      <Text>App is loading...</Text>
+        <Text>App is loading...</Text>
       </View>
     );
   }
@@ -80,34 +86,60 @@ function TaskListHome({ navigation }) {
         <View style={styles.headerCont}>
           <View style={styles.profileImageCont}>
             <SharedElement id="profileimage">
-            <Image
-              source={{ uri: PROFILE_INFO.image }}
-              style={styles.profileImage}
-            />
+              <Image
+                source={{ uri: PROFILE_INFO.image }}
+                style={styles.profileImage}
+              />
             </SharedElement>
           </View>
           <View style={styles.headerNameCont}>
             <SharedElement id="profilename">
               <Text style={styles.profileName}>{PROFILE_INFO.name.first}</Text>
             </SharedElement>
-            <Text style={styles.todosCount}>{"Total Todos: " + Todos.length}</Text>
+            <Text style={styles.todosCount}>
+              {"Total Todos: " + Todos.length}
+            </Text>
           </View>
         </View>
       </View>
-      <View style={{...styles.container, paddingVertical: 22}}>
-        <TodoContainer todos={Todos} removeTodo={removeTodo}/>
+      <View style={{ ...styles.container, paddingVertical: 22 }}>
+        <TodoContainer todos={Todos} removeTodo={removeTodo} />
       </View>
-      <View style={{...styles.container, paddingVertical: 22}}>
+      <View style={{ ...styles.container, paddingVertical: 22 }}>
         <View style={styles.buttonsCont}>
-          <Pressable onPress={() => navigation.navigate("TaskListAdd", { type: "normal", PROFILE_INFO})} style={styles.button}>
-              <Text style={styles.buttonText}>Create Todo</Text>
+          <Pressable
+            onPress={() =>
+              navigation.navigate("TaskListAdd", {
+                type: "normal",
+                PROFILE_INFO,
+              })
+            }
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>Create Todo</Text>
           </Pressable>
-          <Pressable onPress={() => navigation.navigate("TaskListAdd", { type: "important", PROFILE_INFO})} style={{...styles.button, marginRight: 0, backgroundColor: "#1324C2"}}>
-              <Text style={{ ...styles.buttonText, color: "white", fontSize: 15}}>Important Todo</Text>
+          <Pressable
+            onPress={() =>
+              navigation.navigate("TaskListAdd", {
+                type: "important",
+                PROFILE_INFO,
+              })
+            }
+            style={{
+              ...styles.button,
+              marginRight: 0,
+              backgroundColor: "#1324C2",
+            }}
+          >
+            <Text
+              style={{ ...styles.buttonText, color: "white", fontSize: 15 }}
+            >
+              Important Todo
+            </Text>
           </Pressable>
         </View>
       </View>
-      <View style={{...styles.container, paddingVertical: 22}}>
+      <View style={{ ...styles.container, paddingVertical: 22 }}>
         <View style={styles.progressCont}>
           <ProgressCard title="Progress" progress={10} />
           <ProgressCard title="Progress" progress={45} />
@@ -115,73 +147,135 @@ function TaskListHome({ navigation }) {
           <ProgressCard title="Progress" progress={85} />
         </View>
       </View>
-      <View style={{...styles.container, paddingVertical: 22, flexDirection: "row", justifyContent: "center"}}>
-        <View style={{ alignItems: "center", justifyContent: "center", width: 50, height: 50, borderRadius: 25, borderWidth: 1, marginRight: 10, backgroundColor: "white", elevation: 10}}>
+      <View
+        style={{
+          ...styles.container,
+          paddingVertical: 22,
+          flexDirection: "row",
+          justifyContent: "center",
+        }}
+      >
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            width: 50,
+            height: 50,
+            borderRadius: 25,
+            borderWidth: 1,
+            marginRight: 10,
+            backgroundColor: "white",
+            elevation: 10,
+          }}
+        >
           <Feather name="facebook" size={24} color="#3b5998" />
         </View>
-        <View style={{ alignItems: "center", justifyContent: "center", width: 50, height: 50, borderRadius: 25, borderWidth: 1, marginRight: 10, backgroundColor: "white", elevation: 10}}>
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            width: 50,
+            height: 50,
+            borderRadius: 25,
+            borderWidth: 1,
+            marginRight: 10,
+            backgroundColor: "white",
+            elevation: 10,
+          }}
+        >
           <AntDesign name="google" size={24} color="black" />
         </View>
-        <View style={{ alignItems: "center", justifyContent: "center", width: 50, height: 50, borderRadius: 25, borderWidth: 1, marginRight: 0, backgroundColor: "white", elevation: 10}}>
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            width: 50,
+            height: 50,
+            borderRadius: 25,
+            borderWidth: 1,
+            marginRight: 0,
+            backgroundColor: "white",
+            elevation: 10,
+          }}
+        >
           <Feather name="twitter" size={24} color="blue" />
         </View>
       </View>
     </ScrollView>
-  )
-}
-
-const TodoContainer = ({ todos, removeTodo }) => {
-
-  if(todos.length === 0){
-    return <View><Text>Start Adding todos to view them here..</Text></View>
-  }
-  return (
-    <View style={styles.todosCont}>
-    {
-      todos.map((todo,index) => {
-        const [lines,setLines] = React.useState(2)
-        const toggleLines = () => {
-          if (lines === 2) {
-            setLines(50)
-          } else {
-            setLines(2)
-          }
-        }
-        if (todo.done) {
-          return
-        }
-
-        return (
-          <Pressable onPress={() => toggleLines()} onLongPress={() => console.log("Long press")} style={{...styles.todo, backgroundColor: todo.color}} key={todo.key}>
-            <View style={{ flexDirection: "row", alignItems: "center"}}>
-              <View style={styles.todoIconCont}>
-                <Image
-                  source={todo.icon}
-                  style={styles.todoIcon}
-                />
-              </View>
-
-              <View style={styles.todoInfoCont}>
-                <Text numberOfLines={lines - 1} style={styles.todoInfoTitle}>{todo.title}</Text>
-                <Text numberOfLines={lines} style={styles.todoInfoDesc}>{todo.description}</Text>
-              </View>
-            </View>
-            {
-              lines !== 2 && <Pressable onPress={() => removeTodo(todo.key)} style={{ marginTop: 10}}>
-                <View style={{ borderRadius: 10, height: 40, backgroundColor: "#dd1321", alignItems: "center", justifyContent: "center", padding: 15}}>
-                  <Text style={{ color: "white", fontSize: 18}}>Done ?</Text>
-                </View>
-              </Pressable>
-            }
-          </Pressable>
-        );
-      })
-    }
-    </View>
   );
 }
 
-const ProgressCard = ({ title, progress}) => {
+const TodoContainer = ({ todos, removeTodo }) => {
+  if (todos.length === 0) {
+    return (
+      <View>
+        <Text>Start Adding todos to view them here..</Text>
+      </View>
+    );
+  }
+  return (
+    <View style={styles.todosCont}>
+      {todos.map((todo, index) => {
+        const [lines, setLines] = React.useState(2);
+        const toggleLines = () => {
+          if (lines === 2) {
+            setLines(50);
+          } else {
+            setLines(2);
+          }
+        };
+        if (todo.done) {
+          return;
+        }
+
+        return (
+          <Pressable
+            onPress={() => toggleLines()}
+            onLongPress={() => console.log("Long press")}
+            style={{ ...styles.todo, backgroundColor: todo.color }}
+            key={todo.key}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View style={styles.todoIconCont}>
+                <Image source={todo.icon} style={styles.todoIcon} />
+              </View>
+
+              <View style={styles.todoInfoCont}>
+                <Text numberOfLines={lines - 1} style={styles.todoInfoTitle}>
+                  {todo.title}
+                </Text>
+                <Text numberOfLines={lines} style={styles.todoInfoDesc}>
+                  {todo.description}
+                </Text>
+              </View>
+            </View>
+            {lines !== 2 && (
+              <Pressable
+                onPress={() => removeTodo(todo.key)}
+                style={{ marginTop: 10 }}
+              >
+                <View
+                  style={{
+                    borderRadius: 10,
+                    height: 40,
+                    backgroundColor: "#dd1321",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: 15,
+                  }}
+                >
+                  <Text style={{ color: "white", fontSize: 18 }}>Done ?</Text>
+                </View>
+              </Pressable>
+            )}
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+};
+
+const ProgressCard = ({ title, progress }) => {
   const pstyles = StyleSheet.create({
     card: {
       width: 145,
@@ -193,7 +287,7 @@ const ProgressCard = ({ title, progress}) => {
       flexDirection: "column",
       padding: 15,
       elevation: 16,
-      alignItems: "center"
+      alignItems: "center",
     },
     title: {
       fontSize: 22,
@@ -201,26 +295,26 @@ const ProgressCard = ({ title, progress}) => {
       textAlign: "center",
       color: "#050FFB",
       marginBottom: 10,
-    }
-  })
-  const circumference = 45 * 2 * Math.PI
-  const strokeOffset = ((100 - progress) / 100) * Math.PI * 2 * 45
+    },
+  });
+  const circumference = 45 * 2 * Math.PI;
+  const strokeOffset = ((100 - progress) / 100) * Math.PI * 2 * 45;
 
   return (
     <View style={pstyles.card}>
       <Text style={pstyles.title}>{title}</Text>
-      <View style={{ position: "absolute", left: 50, top: 100}}>
-        <Text style={{ fontSize: 22, color: "#050FFB"}}>{progress+ "%"}</Text>
+      <View style={{ position: "absolute", left: 50, top: 100 }}>
+        <Text style={{ fontSize: 22, color: "#050FFB" }}>{progress + "%"}</Text>
       </View>
-      <View style={{ transform: [{ rotate: "270deg"}]}}>
+      <View style={{ transform: [{ rotate: "270deg" }] }}>
         <Svg width={110} height={110}>
           <Circle
-          stroke="#fff00099"
-          strokeWidth={10}
-          fill="none"
-          r={45}
-          cx={55}
-          cy={55}
+            stroke="#fff00099"
+            strokeWidth={10}
+            fill="none"
+            r={45}
+            cx={55}
+            cy={55}
           />
           <Circle
             stroke="#ff0000"
@@ -236,7 +330,7 @@ const ProgressCard = ({ title, progress}) => {
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   app: {
@@ -257,7 +351,6 @@ const styles = StyleSheet.create({
     borderColor: "#0720FEAA",
     borderWidth: 3,
     overflow: "hidden",
-
   },
   headerCont: {
     flexDirection: "row",
@@ -277,9 +370,9 @@ const styles = StyleSheet.create({
     fontSize: 48,
     textShadowOffset: {
       width: 3,
-      height: 3
+      height: 3,
     },
-    textShadowRadius: 1
+    textShadowRadius: 1,
   },
   todosCount: {
     fontSize: 18,
@@ -298,28 +391,27 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
 
-		shadowColor: 'black',
-		shadowOpacity: 1,
-		shadowRadius: 20,
-		shadowOffset: { width: 2, height: 2 },
+    shadowColor: "black",
+    shadowOpacity: 1,
+    shadowRadius: 20,
+    shadowOffset: { width: 2, height: 2 },
   },
   todoIconCont: {
-
-      width: 80,
-      height: 80,
-      alignItems: "center",
-      justifyContent: "center",
-      marginLeft: 13,
-      borderWidth: 1.5,
-      borderRadius: 40,
-      overflow: "hidden",
-      borderColor: "#0720FE",
-      backgroundColor: "#fffa",
+    width: 80,
+    height: 80,
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 13,
+    borderWidth: 1.5,
+    borderRadius: 40,
+    overflow: "hidden",
+    borderColor: "#0720FE",
+    backgroundColor: "#fffa",
   },
   todoIcon: {
     width: 60,
     height: 60,
-    resizeMode: "contain"
+    resizeMode: "contain",
   },
   todoInfoCont: {
     flexDirection: "column",
@@ -334,7 +426,7 @@ const styles = StyleSheet.create({
   todoInfoDesc: {
     fontSize: 15,
     width: "100%",
-    textAlign: "justify"
+    textAlign: "justify",
   },
   buttonsCont: {
     flexDirection: "row",
@@ -349,18 +441,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     elevation: 10,
-    backgroundColor: "white"
+    backgroundColor: "white",
   },
   buttonText: {
     color: "#1324C2",
     fontSize: 20,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   progressCont: {
     flexDirection: "row",
     justifyContent: "space-between",
-    flexWrap: "wrap"
-  }
-})
+    flexWrap: "wrap",
+  },
+});
 
-export default TaskListHome
+export default TaskListHome;
