@@ -1,5 +1,16 @@
-import React from 'react'
-import { Animated, Dimensions, ScrollView, StyleSheet, Text, View, Image, TouchableOpacity, TouchableWithoutFeedback, Button } from 'react-native';
+import React from "react";
+import {
+  Animated,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Button,
+} from "react-native";
 import { SharedElement } from "react-navigation-shared-element";
 
 const { width, height } = Dimensions.get("window");
@@ -14,7 +25,7 @@ const topTabs = [
   "Latté",
   "Hot chocolate",
   "Milkshkes",
-]
+];
 var products = [
   {
     key: 1,
@@ -23,7 +34,8 @@ var products = [
     color1: "#F9AC8A",
     color2: "#FBC6AE",
     aspectRatio: 1,
-    image: "https://raw.githubusercontent.com/wcandillon/can-it-be-done-in-react-native/master/season4/src/PhilzCoffee/assets/coldbrew.png",
+    image:
+      "https://raw.githubusercontent.com/wcandillon/can-it-be-done-in-react-native/master/season4/src/PhilzCoffee/assets/coldbrew.png",
   },
 
   {
@@ -33,7 +45,8 @@ var products = [
     color1: "#4DD2A5",
     color2: "#63D8B0",
     aspectRatio: 1,
-    image: "https://raw.githubusercontent.com/wcandillon/can-it-be-done-in-react-native/master/season4/src/PhilzCoffee/assets/philharmonic.png",
+    image:
+      "https://raw.githubusercontent.com/wcandillon/can-it-be-done-in-react-native/master/season4/src/PhilzCoffee/assets/philharmonic.png",
   },
   {
     key: 3,
@@ -42,7 +55,8 @@ var products = [
     color1: "#FEB829",
     color2: "#FDD446",
     aspectRatio: 1,
-    image: "https://raw.githubusercontent.com/wcandillon/can-it-be-done-in-react-native/master/season4/src/PhilzCoffee/assets/rose.png",
+    image:
+      "https://raw.githubusercontent.com/wcandillon/can-it-be-done-in-react-native/master/season4/src/PhilzCoffee/assets/rose.png",
   },
   {
     key: 4,
@@ -51,7 +65,8 @@ var products = [
     color1: "#FE8E01",
     color2: "#FF9A16",
     aspectRatio: 1,
-    image: "https://raw.githubusercontent.com/wcandillon/can-it-be-done-in-react-native/master/season4/src/PhilzCoffee/assets/coldbrew.png",
+    image:
+      "https://raw.githubusercontent.com/wcandillon/can-it-be-done-in-react-native/master/season4/src/PhilzCoffee/assets/coldbrew.png",
   },
   {
     key: 5,
@@ -60,7 +75,8 @@ var products = [
     color1: "#E2DDD1",
     color2: "#F3F1ED",
     aspectRatio: 757 / 735,
-    image: "https://raw.githubusercontent.com/wcandillon/can-it-be-done-in-react-native/master/season4/src/PhilzCoffee/assets/rose.png",
+    image:
+      "https://raw.githubusercontent.com/wcandillon/can-it-be-done-in-react-native/master/season4/src/PhilzCoffee/assets/rose.png",
   },
   {
     key: 6,
@@ -69,114 +85,128 @@ var products = [
     color1: "#4DD2A5",
     color2: "#63D8B0",
     aspectRatio: 1,
-    image: "https://raw.githubusercontent.com/wcandillon/can-it-be-done-in-react-native/master/season4/src/PhilzCoffee/assets/philharmonic.png",
+    image:
+      "https://raw.githubusercontent.com/wcandillon/can-it-be-done-in-react-native/master/season4/src/PhilzCoffee/assets/philharmonic.png",
   },
 ];
 const extraProducts = [
   {
     key: 1,
-    name: "Coffee 1",
-    description: "One delecious coffee.",
-    image: "https://picsum.photos/200",
-    rating: Math.floor(Math.random() * 5) + "." + Math.floor(Math.random() * 90),
+    name: "Normal Coffee",
+    description: "Charge your mood.",
+    image:
+      "https://images.unsplash.com/photo-1485808191679-5f86510681a2?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=334&q=80",
+    rating:
+      Math.floor(Math.random() * 5) + "." + Math.floor(Math.random() * 90),
     price: Math.floor(Math.random() * 100) + "$",
   },
   {
     key: 2,
-    name: "Coffee 2",
-    description: "Second delecious coffee.",
-    image: "https://picsum.photos/200",
-    rating: Math.floor(Math.random() * 5) + "." + Math.floor(Math.random() * 90),
+    name: "Hot coffee",
+    description: "Warm yourself.",
+    image:
+      "https://images.unsplash.com/photo-1450024529642-858b23834369?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=563&q=80",
+    rating:
+      Math.floor(Math.random() * 5) + "." + Math.floor(Math.random() * 90),
     price: Math.floor(Math.random() * 100) + "$",
   },
   {
     key: 3,
-    name: "Coffee 3",
-    description: "Three delecious coffee.",
-    image: "https://picsum.photos/200",
-    rating: Math.floor(Math.random() * 5) + "." + Math.floor(Math.random() * 90),
+    name: "Espresso",
+    description: "Spark yourself.",
+    image:
+      "https://images.unsplash.com/photo-1503481766315-7a586b20f66d?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=735&q=80",
+    rating:
+      Math.floor(Math.random() * 5) + "." + Math.floor(Math.random() * 90),
     price: Math.floor(Math.random() * 100) + "$",
   },
   {
     key: 4,
-    name: "Coffee 4",
-    description: "Fourth delecious coffee.",
-    image: "https://picsum.photos/200",
-    rating: Math.floor(Math.random() * 5) + "." + Math.floor(Math.random() * 90),
+    name: "Deep brew",
+    description: "A dark one.",
+    image:
+      "https://images.unsplash.com/photo-1504630083234-14187a9df0f5?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=750&q=80",
+    rating:
+      Math.floor(Math.random() * 5) + "." + Math.floor(Math.random() * 90),
     price: Math.floor(Math.random() * 100) + "$",
   },
   {
     key: 5,
-    name: "Coffee 5",
-    description: "Fifth delecious coffee.",
-    image: "https://picsum.photos/200",
-    rating: Math.floor(Math.random() * 5) + "." + Math.floor(Math.random() * 90),
+    name: "Cold coffee",
+    description: "Chill out a bit.",
+    image:
+      "https://images.unsplash.com/photo-1584286595398-a59f21d313f5?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=375&q=80",
+    rating:
+      Math.floor(Math.random() * 5) + "." + Math.floor(Math.random() * 90),
     price: Math.floor(Math.random() * 100) + "$",
   },
   {
     key: 6,
     name: "Coffee 6",
     description: "SIxth delecious coffee.",
-    image: "https://picsum.photos/200",
-    rating: Math.floor(Math.random() * 5) + "." + Math.floor(Math.random() * 90),
+    image:
+      "https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1yZWxhdGVkfDZ8fHxlbnwwfHx8&auto=format&fit=crop&w=500&q=60",
+    rating:
+      Math.floor(Math.random() * 5) + "." + Math.floor(Math.random() * 90),
     price: Math.floor(Math.random() * 100) + "$",
   },
   {
     key: 7,
     name: "Coffee 7",
     description: "Seventh delecious coffee.",
-    image: "https://picsum.photos/200",
-    rating: Math.floor(Math.random() * 5) + "." + Math.floor(Math.random() * 90),
+    image:
+      "https://images.unsplash.com/photo-1485808191679-5f86510681a2?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=334&q=80",
+    rating:
+      Math.floor(Math.random() * 5) + "." + Math.floor(Math.random() * 90),
     price: Math.floor(Math.random() * 100) + "$",
   },
   {
     key: 8,
     name: "Coffee 8",
     description: "Eighth delecious coffee.",
-    image: "https://picsum.photos/200",
-    rating: Math.floor(Math.random() * 5) + "." + Math.floor(Math.random() * 90),
+    image:
+      "https://images.unsplash.com/photo-1578094586127-31233af3e4e1?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1yZWxhdGVkfDd8fHxlbnwwfHx8&auto=format&fit=crop&w=500&q=60",
+    rating:
+      Math.floor(Math.random() * 5) + "." + Math.floor(Math.random() * 90),
     price: Math.floor(Math.random() * 100) + "$",
   },
-]
-
+];
 
 function CoffeeShopHome({ navigation }) {
-  const [currentTopTab, setCurrentTopTab] = React.useState(topTabs[0])
-  const [trigger, setTrigger] = React.useState(0)
-  const cardScroll = React.useRef()
+  const [currentTopTab, setCurrentTopTab] = React.useState(topTabs[0]);
+  const [trigger, setTrigger] = React.useState(0);
+  const cardScroll = React.useRef();
 
   const scrollX = React.useRef(new Animated.Value(0)).current;
 
   const scrolltoCardWithNumber = (cardNum) => {
     if (cardScroll.current) {
-      cardScroll.current.scrollTo({x: width * (cardNum), y: 0, animated: true})
+      cardScroll.current.scrollTo({ x: width * cardNum, y: 0, animated: true });
     }
-  }
+  };
 
   const scrolltoNext = () => {
-      var cur = Math.floor(scrollX._value/ width)
-      cur++
-      if (cur === products.length) {
-        cur = 0
-      }
-      scrolltoCardWithNumber(cur)
+    var cur = Math.floor(scrollX._value / width);
+    cur++;
+    if (cur === products.length) {
+      cur = 0;
+    }
+    scrolltoCardWithNumber(cur);
+  };
 
-  }
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setTrigger((prev) =>{ return ++prev;})
-      scrolltoNext()
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [trigger]);
+  // React.useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setTrigger((prev) => {
+  //       return ++prev;
+  //     });
+  //     scrolltoNext();
+  //   }, 3000);
+  //   return () => clearTimeout(timer);
+  // }, [trigger]);
 
   return (
-    <View style={[{flex: 1, justifyContent: "center"}]}>
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      scrollEventThrottle={16}
-    >
+    <View style={[{ flex: 1, justifyContent: "center" }]}>
+      <ScrollView showsVerticalScrollIndicator={false} scrollEventThrottle={16}>
         <View
           style={{
             marginTop: 20,
@@ -186,27 +216,28 @@ function CoffeeShopHome({ navigation }) {
             borderWidth: 1,
           }}
         >
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-
-          >
-          {
-            topTabs.map((tab,index) => {
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {topTabs.map((tab, index) => {
               const isActive = currentTopTab === tab;
               return (
-                <TouchableOpacity key={index} onPress={() => setCurrentTopTab(tab)}>
-                  <Text style={{
-                     ...styles.topTabButton,
-                     backgroundColor: isActive ? "orange" : "lightgrey",
-                     color: isActive ? "white" : "black",
-                     borderWidth: isActive ? 1 : 0.5,
-                     borderColor: isActive ? "black" : "grey",
-                   }}>{tab}</Text>
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => setCurrentTopTab(tab)}
+                >
+                  <Text
+                    style={{
+                      ...styles.topTabButton,
+                      backgroundColor: isActive ? "orange" : "lightgrey",
+                      color: isActive ? "white" : "black",
+                      borderWidth: isActive ? 1 : 0.5,
+                      borderColor: isActive ? "black" : "grey",
+                    }}
+                  >
+                    {tab}
+                  </Text>
                 </TouchableOpacity>
               );
-            })
-          }
+            })}
           </ScrollView>
         </View>
         <Animated.ScrollView
@@ -217,46 +248,56 @@ function CoffeeShopHome({ navigation }) {
           showsHorizontalScrollIndicator={false}
           scrollEventThrottle={16}
           onScroll={Animated.event(
-            [{ nativeEvent: {contentOffset: {x: scrollX}}}],
-            {useNativeDriver: false}
+            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+            { useNativeDriver: false }
           )}
         >
-          {
-            products.map((product,index) => {
-              const inputRange = [(index - 1) * width, index * width, (index + 1) * width]
-              const outputRange = [0.6,1,0.6]
-              const translateX = scrollX.interpolate({
-                inputRange,
-                outputRange: [-60, 0, 60],
-                extrapolate: "clamp",
-              })
-              return (
-                <TouchableWithoutFeedback key={index} onPress={() => navigation.navigate("CoffeeInfo", { product })}>
-                  <Animated.View style={[styles.coffeCard,{backgroundColor: product.color1,transform: [{translateX}]}]}>
-                    <SharedElement id={`product.${product.key}.title`}>
-                      <Text style={ styles.title } >{product.title}</Text>
-                    </SharedElement>
-                    <SharedElement id={`product.${product.key}.image`}>
-                      <Image
-                        source={{ uri: product.image }}
-                        style={styles.image}
-                      />
-                    </SharedElement>
-                    <SharedElement id={`product.${product.key}.subtitle`}>
-                      <Text style={ styles.subtitle } >{product.subtitle}</Text>
-                    </SharedElement>
-                  </Animated.View>
-                </TouchableWithoutFeedback>
-              );
-            })
-          }
+          {products.map((product, index) => {
+            const inputRange = [
+              (index - 1) * width,
+              index * width,
+              (index + 1) * width,
+            ];
+            const outputRange = [0.6, 1, 0.6];
+            const translateX = scrollX.interpolate({
+              inputRange,
+              outputRange: [-60, 0, 60],
+              extrapolate: "clamp",
+            });
+            return (
+              <TouchableWithoutFeedback
+                key={index}
+                onPress={() => navigation.navigate("CoffeeInfo", { product })}
+              >
+                <Animated.View
+                  style={[
+                    styles.coffeCard,
+                    {
+                      backgroundColor: product.color1,
+                      transform: [{ translateX }],
+                    },
+                  ]}
+                >
+                  <SharedElement id={`product.${product.key}.title`}>
+                    <Text style={styles.title}>{product.title}</Text>
+                  </SharedElement>
+                  <SharedElement id={`product.${product.key}.image`}>
+                    <Image
+                      source={{ uri: product.image }}
+                      style={styles.image}
+                    />
+                  </SharedElement>
+                  <SharedElement id={`product.${product.key}.subtitle`}>
+                    <Text style={styles.subtitle}>{product.subtitle}</Text>
+                  </SharedElement>
+                </Animated.View>
+              </TouchableWithoutFeedback>
+            );
+          })}
         </Animated.ScrollView>
         <Indicator scrollX={scrollX} />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-      >
-        {
-          extraProducts.map((product,index) => {
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {extraProducts.map((product, index) => {
             return (
               <View key={index} style={styles.eProduct}>
                 <View style={styles.eProductImageCont}>
@@ -265,83 +306,81 @@ function CoffeeShopHome({ navigation }) {
                     style={{ flex: 1, borderRadius: 30 }}
                   />
                 </View>
-                <View style={{ flex: 1}}>
+                <View style={{ flex: 1 }}>
                   <Text style={styles.eProductname}>{product.name}</Text>
                   <Text style={styles.eProductdesc}>{product.description}</Text>
                 </View>
                 <View>
                   <Text style={styles.eProductprice}>{product.price}</Text>
-                  <View style={{ flexDirection: "row"}}>
+                  <View style={{ flexDirection: "row" }}>
                     <Text style={styles.eProductrating}>{product.rating}</Text>
-                    <Text style={{...styles.eProductrating, color: "gold"}}>{" 🌟"}</Text>
+                    <Text style={{ ...styles.eProductrating, color: "gold" }}>
+                      {" 🌟"}
+                    </Text>
                   </View>
                 </View>
               </View>
             );
-          })
-        }
+          })}
+        </ScrollView>
       </ScrollView>
-    </ScrollView>
-    <Background scrollX={scrollX} />
+      <Background scrollX={scrollX} />
     </View>
   );
 }
 
 const Indicator = ({ scrollX }) => {
-
-
   return (
-    <View style={{ flexDirection: "row", width: width, justifyContent: "center"}}>
-      {
-        products.map((_,i) => {
-          const scale = scrollX.interpolate({
-            inputRange: [(i - 1) * width, i * width, (i + 1) * width],
-            outputRange: [0.7,2,0.7],
-            extrapolate: "clamp"
-          })
-          const opacity = scrollX.interpolate({
-            inputRange: [(i - 1) * width, i * width, (i + 1) * width],
-            outputRange: [0.6,1,0.6],
-            extrapolate: "clamp"
-          })
-          return (
-              <Animated.View key={i} style={{
-                height: 8,
-                width: 10,
-                borderRadius: 3,
-                backgroundColor: "black",
-                margin: 10,
-                opacity,
-                transform: [
-                  { scaleX: scale }
-                ]
-              }}>
-              </Animated.View>
-          );
-        })
-      }
+    <View
+      style={{ flexDirection: "row", width: width, justifyContent: "center" }}
+    >
+      {products.map((_, i) => {
+        const scale = scrollX.interpolate({
+          inputRange: [(i - 1) * width, i * width, (i + 1) * width],
+          outputRange: [0.7, 2, 0.7],
+          extrapolate: "clamp",
+        });
+        const opacity = scrollX.interpolate({
+          inputRange: [(i - 1) * width, i * width, (i + 1) * width],
+          outputRange: [0.6, 1, 0.6],
+          extrapolate: "clamp",
+        });
+        return (
+          <Animated.View
+            key={i}
+            style={{
+              height: 8,
+              width: 10,
+              borderRadius: 3,
+              backgroundColor: "black",
+              margin: 10,
+              opacity,
+              transform: [{ scaleX: scale }],
+            }}
+          ></Animated.View>
+        );
+      })}
     </View>
   );
-}
+};
 
 const Background = ({ scrollX }) => {
   const backgroundColor = scrollX.interpolate({
-    inputRange: products.map((_,i) => i * width),
-    outputRange: products.map((pro) => pro.color2)
-  })
+    inputRange: products.map((_, i) => i * width),
+    outputRange: products.map((pro) => pro.color2),
+  });
   return (
     <Animated.View
       style={[
         StyleSheet.absoluteFillObject,
         {
           zIndex: -2,
-          backgroundColor
-        }
+          backgroundColor,
+        },
       ]}
-    >
-    </Animated.View>
+    ></Animated.View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   topTabButton: {
@@ -350,7 +389,7 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 20,
     fontSize: 15,
-    fontWeight: "700"
+    fontWeight: "700",
   },
   coffeCard: {
     width: width - CARD_MARGIN * 4,
@@ -380,7 +419,7 @@ const styles = StyleSheet.create({
     width: 160,
     height: 160,
     marginVertical: 20,
-    resizeMode: "contain"
+    resizeMode: "contain",
   },
   eProduct: {
     flexDirection: "row",
@@ -391,11 +430,11 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: "green"
+    borderColor: "green",
   },
   eProductImageCont: {
     height: EXTRA_PRODUCT_HEIGHT - 20,
-    width: EXTRA_PRODUCT_HEIGHT -20,
+    width: EXTRA_PRODUCT_HEIGHT - 20,
     marginRight: 5,
   },
   eProductname: {
@@ -411,6 +450,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   eProductrating: {},
-})
+});
 
-export default CoffeeShopHome
+export default CoffeeShopHome;
