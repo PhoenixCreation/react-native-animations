@@ -1,102 +1,28 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import BackgroundBottom from "../Svgs/SpotTube/BackgroundBottom";
+import { createStackNavigator } from "@react-navigation/stack";
+import SpotTubeHome from "../Routes/SpotTube/SpotTubeHome";
+import SpotTubeMusic from "../Routes/SpotTube/SpotTubeMusic";
+import SpotTubeVideo from "../Routes/SpotTube/SpotTubeVideo";
 
-const { width, height } = Dimensions.get("window");
-const SpotTube = () => {
+const Stack = createStackNavigator();
+
+function Vehical() {
   return (
-    <View style={styles.container}>
-      <View style={styles.backgroundCont}>
-        <BackgroundBottom
-          style={styles.backgroundBottom}
-          width={width}
-          height={width * 0.88}
-        />
-      </View>
-      <TouchableOpacity style={{ ...styles.card, ...styles.cardLeft }}>
-        <View style={styles.logoCont}>
-          <Ionicons
-            style={{ ...styles.logo, ...styles.musicLogo }}
-            name="ios-musical-notes"
-            size={40}
-            color="black"
-          />
-        </View>
-        <View style={styles.typeCont}>
-          <Text style={styles.typeText}>Music</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity style={{ ...styles.card, ...styles.cardRight }}>
-        <View style={styles.logoCont}>
-          <Ionicons
-            style={{ ...styles.logo, ...styles.videoLogo }}
-            name="md-videocam"
-            size={40}
-            color="black"
-          />
-        </View>
-        <View style={styles.typeCont}>
-          <Text style={{ ...styles.typeText, ...styles.videoText }}>
-            Videos
-          </Text>
-        </View>
-      </TouchableOpacity>
-    </View>
+    <Stack.Navigator
+      screenOptions={{
+        gestureEnabled: true,
+        headerShown: false,
+        cardOverlayEnabled: false,
+        cardStyle: { backgroundColor: "transparent" },
+        animationEnabled: false,
+      }}
+      mode="card"
+    >
+      <Stack.Screen name="Home" component={SpotTubeHome} />
+      <Stack.Screen name="Music" component={SpotTubeMusic} />
+      <Stack.Screen name="Video" component={SpotTubeVideo} />
+    </Stack.Navigator>
   );
-};
+}
 
-export default SpotTube;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "rgb(204, 255, 255)",
-    alignItems: "center",
-    justifyContent: "space-evenly",
-    flexDirection: "row",
-  },
-  backgroundCont: {
-    position: "absolute",
-    flex: 1,
-    left: 0,
-    top: 0,
-    height,
-  },
-  backgroundBottom: {
-    position: "absolute",
-    bottom: 0,
-  },
-  card: {
-    width: 150,
-    height: 150,
-    backgroundColor: "#00ff34",
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    elevation: 15,
-  },
-  cardRight: {
-    backgroundColor: "rgba(77, 255, 195,1)",
-  },
-  logo: {
-    fontSize: 60,
-    color: "green",
-  },
-  typeText: {
-    fontSize: 22,
-    color: "green",
-  },
-  videoLogo: {
-    color: "#ff4444",
-  },
-  videoText: {
-    color: "#ff4444",
-  },
-});
+export default Vehical;

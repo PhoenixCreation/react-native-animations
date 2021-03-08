@@ -29,3 +29,5 @@ export const SCREENS = [
   //Add above this line....temp should always be at the end.
   { name: "Temp", component: Temp },
 ];
+
+export const AUDIODB_API_KEY = "537769737343656e746572";

@@ -5,8 +5,20 @@ import * as Animatable from "react-native-animatable";
 // TODO: Fix the animation. It should be turn by turn
 const fadeinout = {
   0: { opacity: 0 },
-  0.5: { opacity: 1 },
+  0.33: { opacity: 1 },
+  0.67: { opacity: 1 },
   1: { opacity: 0 },
+};
+const fadeinout2 = {
+  0: { opacity: 1 },
+  0.33: { opacity: 0 },
+  0.67: { opacity: 0 },
+  1: { opacity: 1 },
+};
+const colorChanger = {
+  0: { fill: "rgb(0,255,45)" },
+  0.5: { fill: "rgb(77, 255, 195)" },
+  1: { fill: "rgb(77, 255, 195)" },
 };
 const AnimatableCircle = Animatable.createAnimatableComponent(Circle);
 const AnimatablePath = Animatable.createAnimatableComponent(Path);
@@ -131,49 +143,51 @@ function BackgroundBottom(props) {
         r={114}
         fill="#3f3d56"
         animation={fadeinout}
-        duration={6000}
+        duration={10000}
         iterationCount="infinite"
-        direction="alternate-reverse"
+        direction="alternate"
+        easing="linear"
       />
       <AnimatablePath
         d="M558.992 280.378v96.991a2.497 2.497 0 003.74 2.302l76.884-48.496a2.748 2.748 0 000-4.571l-76.884-48.496a2.474 2.474 0 00-3.74 2.27z"
         fill="#f2f2f2"
         animation={fadeinout}
-        duration={6000}
+        duration={10000}
         iterationCount="infinite"
-        direction="alternate-reverse"
+        direction="alternate"
+        easing="linear"
       />
       {/* This is music */}
       <AnimatablePath
         d="M488 210 l200 -30 v200 h-20 v-150 l-160 30 v180 h-20 "
         fill="#3f3d56"
-        animation={fadeinout}
-        duration={6000}
+        animation={fadeinout2}
+        duration={10000}
         iterationCount="infinite"
-        direction="alternate-reverse"
-        delay={3000}
+        direction="alternate"
+        easing="linear"
       />
       <AnimatableCircle
         cx={658.139}
         cy={383.689}
         r={30}
         fill="#3f3d56"
-        animation={fadeinout}
-        duration={6000}
+        animation={fadeinout2}
+        duration={10000}
         iterationCount="infinite"
-        direction="alternate-reverse"
-        delay={3000}
+        direction="alternate"
+        easing="linear"
       />
       <AnimatableCircle
         cx={478.139}
         cy={434.689}
         r={30}
         fill="#3f3d56"
-        animation={fadeinout}
-        duration={6000}
+        animation={fadeinout2}
+        duration={10000}
         iterationCount="infinite"
-        direction="alternate-reverse"
-        delay={3000}
+        direction="alternate"
+        easing="linear"
       />
     </Svg>
   );
