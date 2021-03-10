@@ -2,7 +2,6 @@ import * as React from "react";
 import Svg, { Path, Circle } from "react-native-svg";
 import * as Animatable from "react-native-animatable";
 
-// TODO: Fix the animation. It should be turn by turn
 const fadeinout = {
   0: { opacity: 0 },
   0.33: { opacity: 1 },

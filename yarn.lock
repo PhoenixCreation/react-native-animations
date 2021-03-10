@@ -2624,6 +2624,11 @@ expo-location@~9.0.0:
   resolved "https://registry.yarnpkg.com/expo-location/-/expo-location-9.0.1.tgz#adf93b8adf5e9dcf9570cba1d66c8e3831329156"
   integrity sha512-yl4V2IelxrjG1h3nshkyILwghysNJvvEuR4Of0U7oYAsBrT0cq8NxFuaDemRvqt9Yb19wVFNMoVtYFNpthcqpQ==
 
+expo-media-library@~9.2.1:
+  version "9.2.1"
+  resolved "https://registry.yarnpkg.com/expo-media-library/-/expo-media-library-9.2.1.tgz#11583e40087d77cf16e70bb7db0048d2bd1938b5"
+  integrity sha512-A9AAGI1200P0oULoXA7U7wQ91zgPWl9GWo5H9EQvVDHp1ABX8tf2qTOad6Y0KotHYWVMIyfsVXzVYAbjJ9LxPQ==
+
 expo-permissions@~9.3.0:
   version "9.3.0"
   resolved "https://registry.yarnpkg.com/expo-permissions/-/expo-permissions-9.3.0.tgz#b90c7e9e411d306c1c7ba2bae18d5c53c201affd"
@@ -4797,6 +4802,11 @@ react-native-gesture-handler@~1.7.0:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.4"
     prop-types "^15.7.2"
+
+react-native-get-music-files@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-get-music-files/-/react-native-get-music-files-2.1.0.tgz#81d51ae08f659879db6fd00e982980a0dc3e5063"
+  integrity sha512-wNAhTAzzga55itaJx59RWRsPRNp8AkvFWs04gE2TzV3/z1Jbje3hB590JVjGlD6uNtVwstHcOAZwct35ZjURHg==
 
 react-native-iphone-x-helper@^1.2.1, react-native-iphone-x-helper@^1.3.0:
   version "1.3.1"
