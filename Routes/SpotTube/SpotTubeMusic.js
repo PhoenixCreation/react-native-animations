@@ -17,10 +17,11 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import { songs } from "../../dummyData";
+import { songs as defaultSongs } from "../../dummyData";
 import { createAnimatableComponent } from "react-native-animatable";
 import { Entypo } from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
+import MusicInfo from "expo-music-info";
 const { width, height } = Dimensions.get("window");
 
 const AnimatableImage = createAnimatableComponent(Image);
@@ -43,6 +44,7 @@ const SpringConfig = {
 
 export default function SpotTubeMusic() {
   const [sound, setSound] = useState(null);
+  const [songs, setSongs] = useState(defaultSongs);
   const [currentSong, setCurrentSong] = useState(songs[0]);
 
   const translateY = useSharedValue(0);
@@ -50,13 +52,58 @@ export default function SpotTubeMusic() {
 
   useEffect(() => {
     getUserAudios();
-  });
+  }, []);
 
   const getUserAudios = async () => {
-    const { status } = MediaLibrary.requestPermissionsAsync();
-    if (status === "granted") {
-      console.log("here");
+    try {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status === "granted") {
+        const userSongs = await MediaLibrary.getAssetsAsync({
+          first: 8,
+          mediaType: MediaLibrary.MediaType.audio,
+        });
+        var newSongs = [];
+        for (var i = 0; i < userSongs.assets.length; i++) {
+          const crntSong = userSongs.assets[i];
+          var tempSong = {};
+          tempSong.id = crntSong.id;
+          tempSong.song_name = crntSong.filename;
+          tempSong.song_source = crntSong.uri;
+          tempSong.song_photo = "https://picsum.photos/480/480";
+          tempSong.artist_photo =
+            "https://picsum.photos/480/480?random=" +
+            Math.floor(Math.random() * 100);
+          tempSong.artists = ["No artists"];
+          newSongs.push(tempSong);
+        }
+        setSongs((prev) => [...prev, ...newSongs]);
+      }
+    } catch (error) {
+      console.log(error);
     }
+  };
+
+  const changeSongTo = async (newSong) => {
+    let metadata = await MusicInfo.getMusicInfoAsync(newSong.song_source, {
+      title: true,
+      artist: true,
+      album: true,
+      genre: true,
+      picture: true,
+    });
+    if (metadata) {
+      if (metadata?.picture?.pictureData) {
+        newSong.song_photo = metadata.picture.pictureData;
+      } else {
+        // TODO: Add default image
+        newSong.song_photo = "https://picsum.photos/480/480";
+      }
+      newSong.artist_photo =
+        "https://picsum.photos/480/480?random=" +
+        Math.floor(Math.random() * 100);
+      newSong.artists = [metadata?.artist];
+    }
+    setCurrentSong(newSong);
   };
 
   useEffect(() => {
@@ -66,8 +113,7 @@ export default function SpotTubeMusic() {
   async function playSound() {
     console.log("Loading Sound");
     const { sound, status: newStatus } = await Audio.Sound.createAsync({
-      uri:
-        "https://s3.amazonaws.com/exp-us-standard/audio/playlist-example/Comfort_Fit_-_03_-_Sorry.mp3",
+      uri: currentSong.song_source,
     });
     setSound(sound);
 
@@ -127,10 +173,7 @@ export default function SpotTubeMusic() {
           <Image
             style={styles.albumImage}
             source={{
-              uri:
-                currentSong.song_photo +
-                "random=" +
-                Math.floor(Math.random() * 10000),
+              uri: currentSong.song_photo,
             }}
           />
           <View style={styles.artistImageCont}>
@@ -156,12 +199,12 @@ export default function SpotTubeMusic() {
                 <Pressable
                   key={index}
                   style={styles.songCont}
-                  onPress={() => setCurrentSong(song)}
+                  onPress={() => changeSongTo(song)}
                 >
                   <View style={styles.songImageCont}>
                     <Image
                       style={styles.songImage}
-                      source={{ uri: song.song_photo + "random=" + index }}
+                      source={{ uri: song.song_photo }}
                     />
                     {isCurrentlyPlaying && (
                       <View style={styles.isPlaying}>
@@ -174,10 +217,12 @@ export default function SpotTubeMusic() {
                     )}
                   </View>
                   <View style={styles.songInfo}>
-                    <Text style={styles.songName}>{song.song_name}</Text>
-                    <Text style={styles.artistsName}>
+                    <Text style={styles.songName} numberOfLines={1}>
+                      {song.song_name}
+                    </Text>
+                    <Text style={styles.artistsName} numberOfLines={1}>
                       {song.artists.map((artist) => {
-                        return artist + ", ";
+                        return artist;
                       })}
                     </Text>
                   </View>
