@@ -14,7 +14,8 @@ function Vehical() {
         headerShown: false,
         cardOverlayEnabled: false,
         cardStyle: { backgroundColor: "transparent" },
-        animationEnabled: false,
+        animationEnabled: true,
+        gestureDirection: "horizontal",
       }}
       mode="card"
     >

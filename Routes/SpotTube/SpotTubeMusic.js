@@ -7,6 +7,7 @@ import {
   Dimensions,
   Image,
   Pressable,
+  TouchableHighlight,
 } from "react-native";
 import { Audio } from "expo-av";
 import { PanGestureHandler } from "react-native-gesture-handler";
@@ -16,33 +17,29 @@ import Animated, {
   useSharedValue,
   withSpring,
   withTiming,
+  interpolate,
+  Extrapolate,
 } from "react-native-reanimated";
 import { songs as defaultSongs } from "../../dummyData";
-import { createAnimatableComponent } from "react-native-animatable";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, Ionicons, AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
 import MusicInfo from "expo-music-info";
 const { width, height } = Dimensions.get("window");
 
-const AnimatableImage = createAnimatableComponent(Image);
-
-const rotateAnimation = {
-  0: { rotate: "0deg" },
-  1: { rotate: "360deg" },
-};
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const BAR_HEIGHT = 60;
 
 const theme = {
   backgroundColor: "#333333",
-  playerBackgroundColor: "#9474ff",
+  playerBackgroundColor: "#4850b1",
 };
 
 const SpringConfig = {
   damping: 14,
 };
 
-export default function SpotTubeMusic() {
+export default function SpotTubeMusic({ navigation }) {
   const [sound, setSound] = useState(null);
   const [songs, setSongs] = useState(defaultSongs);
   const [currentSong, setCurrentSong] = useState(songs[0]);
@@ -50,9 +47,9 @@ export default function SpotTubeMusic() {
   const translateY = useSharedValue(0);
   const offsetY = useSharedValue(0);
 
-  useEffect(() => {
-    getUserAudios();
-  }, []);
+  // useEffect(() => {
+  //   getUserAudios();
+  // }, []);
 
   const getUserAudios = async () => {
     try {
@@ -84,25 +81,25 @@ export default function SpotTubeMusic() {
   };
 
   const changeSongTo = async (newSong) => {
-    let metadata = await MusicInfo.getMusicInfoAsync(newSong.song_source, {
-      title: true,
-      artist: true,
-      album: true,
-      genre: true,
-      picture: true,
-    });
-    if (metadata) {
-      if (metadata?.picture?.pictureData) {
-        newSong.song_photo = metadata.picture.pictureData;
-      } else {
-        // TODO: Add default image
-        newSong.song_photo = "https://picsum.photos/480/480";
-      }
-      newSong.artist_photo =
-        "https://picsum.photos/480/480?random=" +
-        Math.floor(Math.random() * 100);
-      newSong.artists = [metadata?.artist];
-    }
+    // let metadata = await MusicInfo.getMusicInfoAsync(newSong.song_source, {
+    //   title: true,
+    //   artist: true,
+    //   album: true,
+    //   genre: true,
+    //   picture: true,
+    // });
+    // if (metadata) {
+    //   if (metadata?.picture?.pictureData) {
+    //     newSong.song_photo = metadata.picture.pictureData;
+    //   } else {
+    //     // TODO: Add default image
+    //     newSong.song_photo = "https://picsum.photos/480/480";
+    //   }
+    //   newSong.artist_photo =
+    //     "https://picsum.photos/480/480?random=" +
+    //     Math.floor(Math.random() * 100);
+    //   newSong.artists = [metadata?.artist];
+    // }
     setCurrentSong(newSong);
   };
 
@@ -160,14 +157,72 @@ export default function SpotTubeMusic() {
       zIndex: 10,
       borderTopLeftRadius: 15,
       borderTopRightRadius: 15,
+      borderColor: "yellow",
+      borderWidth: 2,
+      overflow: "hidden",
       backgroundColor: theme.playerBackgroundColor,
       transform: [{ translateY: translateY.value + (height - BAR_HEIGHT) }],
     };
   });
 
+  const playerSmallStyle = useAnimatedStyle(() => {
+    return {
+      position: "absolute",
+      top: 0,
+      width: "100%",
+      height: BAR_HEIGHT,
+      zIndex: 10,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: 10,
+      opacity: interpolate(
+        translateY.value,
+        [-(height - BAR_HEIGHT) / 3, 0],
+        [0, 1],
+        Extrapolate.CLAMP
+      ),
+      display: translateY.value > -(height - BAR_HEIGHT) / 3 ? "none" : "flex",
+    };
+  });
+
+  const goFullScreen = () => {
+    translateY.value = withSpring(-(height - BAR_HEIGHT), SpringConfig);
+    offsetY.value = -(height - BAR_HEIGHT);
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.topBarCont}></View>
+      <View style={styles.topBarCont}>
+        <Pressable style={styles.backButtonCont}>
+          <Ionicons
+            style={styles.backButton}
+            name="ios-arrow-round-back"
+            size={24}
+            color="white"
+            onPress={() => navigation.goBack()}
+          />
+        </Pressable>
+        <View style={styles.headingCont}>
+          <Text style={styles.heading} numberOfLines={1}>
+            {currentSong.song_name}
+          </Text>
+        </View>
+        <Pressable
+          style={styles.moreOptionsCont}
+          accessible={true}
+          accessibilityLabel="More options"
+          accessibilityHint="More options"
+          onPress={() => {}}
+        >
+          <Entypo
+            style={styles.moreOptions}
+            name="dots-three-vertical"
+            size={16}
+            color="white"
+          />
+        </Pressable>
+      </View>
       <View style={styles.albumsCont}>
         <View style={styles.albumImageCont}>
           <Image
@@ -177,12 +232,7 @@ export default function SpotTubeMusic() {
             }}
           />
           <View style={styles.artistImageCont}>
-            <AnimatableImage
-              animation={rotateAnimation}
-              duration={3000}
-              easing="linear"
-              delay={2000}
-              iterationCount="infinite"
+            <Image
               style={styles.artistImage}
               source={{ uri: currentSong.artist_photo }}
             />
@@ -198,13 +248,20 @@ export default function SpotTubeMusic() {
               return (
                 <Pressable
                   key={index}
-                  style={styles.songCont}
+                  style={{
+                    ...styles.songCont,
+                    backgroundColor: isCurrentlyPlaying
+                      ? theme.playerBackgroundColor + "44"
+                      : "transparent",
+                  }}
                   onPress={() => changeSongTo(song)}
                 >
                   <View style={styles.songImageCont}>
                     <Image
                       style={styles.songImage}
-                      source={{ uri: song.song_photo }}
+                      source={{
+                        uri: song.song_photo,
+                      }}
                     />
                     {isCurrentlyPlaying && (
                       <View style={styles.isPlaying}>
@@ -217,12 +274,18 @@ export default function SpotTubeMusic() {
                     )}
                   </View>
                   <View style={styles.songInfo}>
-                    <Text style={styles.songName} numberOfLines={1}>
+                    <Text
+                      style={{
+                        ...styles.songName,
+                        fontWeight: isCurrentlyPlaying ? "bold" : "100",
+                      }}
+                      numberOfLines={1}
+                    >
                       {song.song_name}
                     </Text>
                     <Text style={styles.artistsName} numberOfLines={1}>
                       {song.artists.map((artist) => {
-                        return artist;
+                        return artist + ", ";
                       })}
                     </Text>
                   </View>
@@ -248,7 +311,42 @@ export default function SpotTubeMusic() {
         onGestureEvent={onGestureEvent}
         style={{ flex: 1, width, height }}
       >
-        <Animated.View style={playerStyle}></Animated.View>
+        <Animated.View style={{ ...styles.player, ...playerStyle }}>
+          <AnimatedPressable
+            style={playerSmallStyle}
+            onPress={() => goFullScreen()}
+          >
+            <View style={styles.playerSongImageCont}>
+              <Image
+                style={styles.playerSongImage}
+                source={{ uri: currentSong.song_photo }}
+              />
+            </View>
+            <View style={styles.playerSongInfoCont}>
+              <Text style={styles.playerSongName} numberOfLines={1}>
+                {currentSong.song_name}
+              </Text>
+              <Text style={styles.playerArtistsName} numberOfLines={1}>
+                {currentSong.artists.map((artist) => {
+                  return artist + ", ";
+                })}
+              </Text>
+            </View>
+            <Pressable style={styles.lastSongCont} onPress={() => {}}>
+              <AntDesign name="fastbackward" size={20} color="white" />
+            </Pressable>
+            <Pressable style={styles.playPauseSongCont} onPress={() => {}}>
+              <Entypo name="controller-play" size={24} color="white" />
+            </Pressable>
+            <Pressable style={styles.nextSongCont} onPress={() => {}}>
+              <AntDesign name="fastforward" size={20} color="white" />
+            </Pressable>
+            <Pressable style={styles.muteCont} onPress={() => {}}>
+              <FontAwesome5 name="volume-mute" size={21} color="white" />
+            </Pressable>
+          </AnimatedPressable>
+          <View style={styles.playerFull}></View>
+        </Animated.View>
       </PanGestureHandler>
     </View>
   );
@@ -263,6 +361,34 @@ const styles = StyleSheet.create({
     width,
     height: 50,
     backgroundColor: theme.backgroundColor,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  headingCont: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  heading: {
+    color: "#d1d1dd",
+    fontSize: 18,
+    fontWeight: "100",
+  },
+  backButtonCont: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  moreOptionsCont: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  backButton: {
+    fontSize: 35,
+  },
+  moreOptions: {
+    fontSize: 20,
   },
   albumsCont: {
     width,
@@ -352,21 +478,65 @@ const styles = StyleSheet.create({
     backgroundColor: "#31313199",
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: 40,
   },
   songInfo: {
     flex: 1,
   },
   songName: {
-    color: "#e1e1e1",
-    fontSize: 15,
-    fontWeight: "bold",
+    color: "white",
+    fontSize: 16,
   },
   artistsName: {
     color: "lightgrey",
-    fontSize: 13,
+    fontSize: 12,
   },
   songOption: {
     paddingHorizontal: 15,
     paddingVertical: 5,
+  },
+  playerFull: {
+    width: "100%",
+    height: "100%",
+  },
+  playerSongImageCont: {
+    width: 40,
+    height: 40,
+    borderRadius: 50,
+    overflow: "hidden",
+    marginRight: 10,
+  },
+  playerSongImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 50,
+    resizeMode: "cover",
+  },
+  playerSongInfoCont: {
+    flex: 1,
+    marginTop: -5,
+  },
+  playerSongName: {
+    fontWeight: "bold",
+    color: "white",
+    fontSize: 19,
+  },
+  playerArtistsName: {
+    fontSize: 12,
+    color: "white",
+    marginTop: -5,
+  },
+  lastSongCont: {
+    paddingHorizontal: 5,
+  },
+  playPauseSongCont: {
+    paddingHorizontal: 5,
+  },
+  nextSongCont: {
+    paddingHorizontal: 5,
+  },
+  muteCont: {
+    paddingHorizontal: 5,
+    marginLeft: 3,
   },
 });
