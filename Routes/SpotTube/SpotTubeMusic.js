@@ -19,6 +19,7 @@ import Animated, {
   withTiming,
   interpolate,
   Extrapolate,
+  Easing,
 } from "react-native-reanimated";
 import { songs as defaultSongs } from "../../dummyData";
 import {
@@ -285,6 +286,184 @@ export default function SpotTubeMusic({ navigation }) {
     };
   });
 
+  const likeAnimation = useSharedValue(0);
+
+  const likeAnimationStyle1 = useAnimatedStyle(() => {
+    return {
+      position: "absolute",
+      opacity: interpolate(likeAnimation.value, [0, 0.2, 1], [0, 0.8, 0]),
+      transform: [
+        { translateY: interpolate(likeAnimation.value, [0, 1], [0, -70]) },
+        { translateX: interpolate(likeAnimation.value, [0, 1], [0, 60]) },
+        {
+          scaleX: interpolate(
+            likeAnimation.value,
+            [0, 0.2, 1],
+            [0.8, 1.7, 0.9]
+          ),
+        },
+        {
+          scaleY: interpolate(
+            likeAnimation.value,
+            [0, 0.2, 1],
+            [0.8, 1.7, 0.9]
+          ),
+        },
+      ],
+    };
+  });
+  const likeAnimationStyle2 = useAnimatedStyle(() => {
+    return {
+      position: "absolute",
+      opacity: interpolate(likeAnimation.value, [0, 0.23, 1], [0, 0.8, 0]),
+      transform: [
+        { translateY: interpolate(likeAnimation.value, [0, 1], [0, -80]) },
+        { translateX: interpolate(likeAnimation.value, [0, 1], [0, 50]) },
+        {
+          scaleX: interpolate(
+            likeAnimation.value,
+            [0, 0.23, 1],
+            [0.8, 1.7, 0.9]
+          ),
+        },
+        {
+          scaleY: interpolate(
+            likeAnimation.value,
+            [0, 0.23, 1],
+            [0.8, 1.7, 0.9]
+          ),
+        },
+      ],
+    };
+  });
+  const likeAnimationStyle3 = useAnimatedStyle(() => {
+    return {
+      position: "absolute",
+      opacity: interpolate(likeAnimation.value, [0, 0.26, 1], [0, 0.8, 0]),
+      transform: [
+        { translateY: interpolate(likeAnimation.value, [0, 1], [0, -80]) },
+        { translateX: interpolate(likeAnimation.value, [0, 1], [0, -50]) },
+        {
+          scaleX: interpolate(
+            likeAnimation.value,
+            [0, 0.27, 1],
+            [0.8, 1.7, 0.9]
+          ),
+        },
+        {
+          scaleY: interpolate(
+            likeAnimation.value,
+            [0, 0.27, 1],
+            [0.8, 1.7, 0.9]
+          ),
+        },
+      ],
+    };
+  });
+  const likeAnimationStyle4 = useAnimatedStyle(() => {
+    return {
+      position: "absolute",
+      opacity: interpolate(likeAnimation.value, [0, 0.3, 1], [0, 0.8, 0]),
+      transform: [
+        { translateY: interpolate(likeAnimation.value, [0, 1], [0, -120]) },
+        { translateX: interpolate(likeAnimation.value, [0, 1], [0, 0]) },
+        {
+          scaleX: interpolate(
+            likeAnimation.value,
+            [0, 0.3, 1],
+            [0.8, 1.7, 0.9]
+          ),
+        },
+        {
+          scaleY: interpolate(
+            likeAnimation.value,
+            [0, 0.3, 1],
+            [0.8, 1.7, 0.9]
+          ),
+        },
+      ],
+    };
+  });
+  const likeAnimationStyle5 = useAnimatedStyle(() => {
+    return {
+      position: "absolute",
+      opacity: interpolate(likeAnimation.value, [0, 0.33, 1], [0, 0.8, 0]),
+      transform: [
+        { translateY: interpolate(likeAnimation.value, [0, 1], [0, -90]) },
+        { translateX: interpolate(likeAnimation.value, [0, 1], [0, 20]) },
+        {
+          scaleX: interpolate(
+            likeAnimation.value,
+            [0, 0.33, 1],
+            [0.8, 1.7, 0.9]
+          ),
+        },
+        {
+          scaleY: interpolate(
+            likeAnimation.value,
+            [0, 0.33, 1],
+            [0.8, 1.7, 0.9]
+          ),
+        },
+      ],
+    };
+  });
+  const likeAnimationStyle6 = useAnimatedStyle(() => {
+    return {
+      position: "absolute",
+      opacity: interpolate(likeAnimation.value, [0, 0.36, 1], [0, 0.8, 0]),
+      transform: [
+        { translateY: interpolate(likeAnimation.value, [0, 1], [0, -90]) },
+        { translateX: interpolate(likeAnimation.value, [0, 1], [0, -20]) },
+        {
+          scaleX: interpolate(
+            likeAnimation.value,
+            [0, 0.36, 1],
+            [0.8, 1.7, 0.9]
+          ),
+        },
+        {
+          scaleY: interpolate(
+            likeAnimation.value,
+            [0, 0.36, 1],
+            [0.8, 1.7, 0.9]
+          ),
+        },
+      ],
+    };
+  });
+  const likeAnimationStyle7 = useAnimatedStyle(() => {
+    return {
+      position: "absolute",
+      opacity: interpolate(likeAnimation.value, [0, 0.39, 1], [0, 0.8, 0]),
+      transform: [
+        { translateY: interpolate(likeAnimation.value, [0, 1], [0, -70]) },
+        { translateX: interpolate(likeAnimation.value, [0, 1], [0, -60]) },
+        {
+          scaleX: interpolate(
+            likeAnimation.value,
+            [0, 0.39, 1],
+            [0.8, 1.7, 0.9]
+          ),
+        },
+        {
+          scaleY: interpolate(
+            likeAnimation.value,
+            [0, 0.39, 1],
+            [0.8, 1.7, 0.9]
+          ),
+        },
+      ],
+    };
+  });
+
+  const startLikeAnimation = () => {
+    likeAnimation.value = 0;
+    likeAnimation.value = withTiming(1, {
+      duration: 1000,
+    });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.topBarCont}>
@@ -504,8 +683,69 @@ export default function SpotTubeMusic({ navigation }) {
                     color="white"
                   />
                 </Pressable>
-                <Pressable style={styles.fullBottomLikeCont}>
+                <Pressable
+                  style={styles.fullBottomLikeCont}
+                  onPress={() => startLikeAnimation()}
+                >
                   <FontAwesome name="heart-o" size={24} color="white" />
+                  <View style={styles.likeAnimationCont}>
+                    <Animated.View
+                      style={{
+                        ...styles.likeAnimationHeart,
+                        ...likeAnimationStyle1,
+                      }}
+                    >
+                      <Entypo name="heart" size={24} color="white" />
+                    </Animated.View>
+                    <Animated.View
+                      style={{
+                        ...styles.likeAnimationHeart,
+                        ...likeAnimationStyle2,
+                      }}
+                    >
+                      <Entypo name="heart" size={24} color="white" />
+                    </Animated.View>
+                    <Animated.View
+                      style={{
+                        ...styles.likeAnimationHeart,
+                        ...likeAnimationStyle3,
+                      }}
+                    >
+                      <Entypo name="heart" size={24} color="white" />
+                    </Animated.View>
+                    <Animated.View
+                      style={{
+                        ...styles.likeAnimationHeart,
+                        ...likeAnimationStyle4,
+                      }}
+                    >
+                      <Entypo name="heart" size={24} color="white" />
+                    </Animated.View>
+                    <Animated.View
+                      style={{
+                        ...styles.likeAnimationHeart,
+                        ...likeAnimationStyle5,
+                      }}
+                    >
+                      <Entypo name="heart" size={24} color="white" />
+                    </Animated.View>
+                    <Animated.View
+                      style={{
+                        ...styles.likeAnimationHeart,
+                        ...likeAnimationStyle6,
+                      }}
+                    >
+                      <Entypo name="heart" size={24} color="white" />
+                    </Animated.View>
+                    <Animated.View
+                      style={{
+                        ...styles.likeAnimationHeart,
+                        ...likeAnimationStyle7,
+                      }}
+                    >
+                      <Entypo name="heart" size={24} color="white" />
+                    </Animated.View>
+                  </View>
                 </Pressable>
                 <Pressable style={styles.fullBottomAddCont}>
                   <AntDesign name="plus" size={24} color="white" />
@@ -526,7 +766,7 @@ export default function SpotTubeMusic({ navigation }) {
                     ></Animated.View>
                     <Animated.View style={forgroundStyle}></Animated.View>
                     <Animated.View style={sliderButtonStyle}></Animated.View>
-                    <Text style={sliderStyles.timeStart}>0:00</Text>
+                    <Text style={sliderStyles.timeStart} children="2:03" />
                     <Text style={sliderStyles.timeEnd}>2:34</Text>
                   </Animated.View>
                 </PanGestureHandler>
@@ -589,6 +829,9 @@ const sliderStyles = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+  likeAnimationCont: {
+    position: "absolute",
+  },
   container: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: theme.backgroundColor,
