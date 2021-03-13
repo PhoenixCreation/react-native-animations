@@ -210,36 +210,78 @@ export default function SpotTubeMusic({ navigation }) {
 
   const sliderValue = useSharedValue(0);
   const sliderOffsetValue = useSharedValue(0);
+  const sliderState = useSharedValue("normal");
+  const [sliderWidth, setSliderWidth] = useState(1);
 
   const sliderGestureEvent = useAnimatedGestureHandler({
     onStart: () => {},
     onActive: ({ translationX }) => {
       sliderValue.value = translationX + sliderOffsetValue.value;
+      sliderState.value = "active";
     },
     onEnd: ({ translationX }) => {
+      sliderState.value = "normal";
       sliderValue.value = translationX + sliderOffsetValue.value;
-      sliderOffsetValue.value = translationX + sliderOffsetValue.value;
+      if (translationX + sliderOffsetValue.value < 0) {
+        sliderOffsetValue.value = 0;
+      } else if (translationX + sliderOffsetValue.value > sliderWidth) {
+        sliderOffsetValue.value = sliderWidth;
+      } else {
+        sliderOffsetValue.value = translationX + sliderOffsetValue.value;
+      }
+    },
+    onCancel: () => {
+      sliderState.value = "normal";
+    },
+    onFail: () => {
+      sliderState.value = "normal";
     },
   });
 
-  const forgroundStyle = useAnimatedStyle(() => {
+  const sliderButtonStyle = useAnimatedStyle(() => {
     return {
-      width: 40,
-      height: 40,
+      width: 15,
+      height: 15,
+      opacity: sliderState.value === "normal" ? 1 : 0,
       borderRadius: 40,
-      backgroundColor: "black",
+      backgroundColor: "#3838f1",
       position: "absolute",
       alignSelf: "flex-start",
       transform: [
         {
           translateX: interpolate(
             sliderValue.value,
-            [0, width - 50],
-            [0, width - 50],
+            [0, sliderWidth],
+            [0, sliderWidth - 10],
             Extrapolate.CLAMP
           ),
         },
       ],
+    };
+  });
+
+  const backgroundStyle = useAnimatedStyle(() => {
+    return {
+      width: "100%",
+      backgroundColor: "white",
+      borderRadius: 20,
+      height: sliderState.value === "normal" ? 5 : 15,
+    };
+  });
+
+  const forgroundStyle = useAnimatedStyle(() => {
+    return {
+      position: "absolute",
+      alignSelf: "flex-start",
+      height: sliderState.value === "normal" ? 5 : 15,
+      borderRadius: 20,
+      width: interpolate(
+        sliderValue.value,
+        [0, sliderWidth],
+        [5, sliderWidth],
+        Extrapolate.CLAMP
+      ),
+      backgroundColor: "#3838f1",
     };
   });
 
@@ -477,9 +519,15 @@ export default function SpotTubeMusic({ navigation }) {
                 >
                   <Animated.View style={sliderStyles.innerCont}>
                     <Animated.View
-                      style={sliderStyles.background}
+                      style={{ ...sliderStyles.background, ...backgroundStyle }}
+                      onLayout={(nativeEvent) =>
+                        setSliderWidth(nativeEvent.nativeEvent.layout.width)
+                      }
                     ></Animated.View>
                     <Animated.View style={forgroundStyle}></Animated.View>
+                    <Animated.View style={sliderButtonStyle}></Animated.View>
+                    <Text style={sliderStyles.timeStart}>0:00</Text>
+                    <Text style={sliderStyles.timeEnd}>2:34</Text>
                   </Animated.View>
                 </PanGestureHandler>
               </View>
@@ -523,6 +571,20 @@ const sliderStyles = StyleSheet.create({
     height: 5,
     backgroundColor: "white",
     borderRadius: 10,
+  },
+  timeStart: {
+    fontSize: 14,
+    position: "absolute",
+    left: 0,
+    bottom: 0,
+    color: "white",
+  },
+  timeEnd: {
+    fontSize: 14,
+    position: "absolute",
+    right: 0,
+    bottom: 0,
+    color: "white",
   },
 });
 

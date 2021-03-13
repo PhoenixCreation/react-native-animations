@@ -10,7 +10,7 @@ function Vehical() {
   return (
     <Stack.Navigator
       screenOptions={{
-        gestureEnabled: true,
+        gestureEnabled: false,
         headerShown: false,
         cardOverlayEnabled: false,
         cardStyle: { backgroundColor: "transparent" },
