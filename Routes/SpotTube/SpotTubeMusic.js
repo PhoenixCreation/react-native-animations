@@ -21,7 +21,15 @@ import Animated, {
   Extrapolate,
 } from "react-native-reanimated";
 import { songs as defaultSongs } from "../../dummyData";
-import { Entypo, Ionicons, AntDesign, FontAwesome5 } from "@expo/vector-icons";
+import {
+  Entypo,
+  Ionicons,
+  AntDesign,
+  FontAwesome,
+  FontAwesome5,
+  MaterialIcons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
 import MusicInfo from "expo-music-info";
 const { width, height } = Dimensions.get("window");
@@ -32,11 +40,11 @@ const BAR_HEIGHT = 60;
 
 const theme = {
   backgroundColor: "#333333",
-  playerBackgroundColor: "#4850b1",
+  playerBackgroundColor: "#7878d1",
 };
 
 const SpringConfig = {
-  damping: 14,
+  damping: 12,
 };
 
 export default function SpotTubeMusic({ navigation }) {
@@ -171,16 +179,20 @@ export default function SpotTubeMusic({ navigation }) {
       top: 0,
       width: "100%",
       height: BAR_HEIGHT,
-      zIndex: 10,
+      zIndex: interpolate(
+        translateY.value,
+        [-(height - BAR_HEIGHT) / 7, 0],
+        [5, 15]
+      ),
       flexDirection: "row",
+      backgroundColor: theme.playerBackgroundColor,
       justifyContent: "space-between",
       alignItems: "center",
       padding: 10,
       opacity: interpolate(
         translateY.value,
         [-(height - BAR_HEIGHT) / 3, 0],
-        [0, 1],
-        Extrapolate.CLAMP
+        [0, 1]
       ),
       display: translateY.value > -(height - BAR_HEIGHT) / 3 ? "none" : "flex",
     };
@@ -189,6 +201,10 @@ export default function SpotTubeMusic({ navigation }) {
   const goFullScreen = () => {
     translateY.value = withSpring(-(height - BAR_HEIGHT), SpringConfig);
     offsetY.value = -(height - BAR_HEIGHT);
+  };
+  const goSmallScreen = () => {
+    translateY.value = withSpring(0, SpringConfig);
+    offsetY.value = 0;
   };
 
   return (
@@ -345,7 +361,100 @@ export default function SpotTubeMusic({ navigation }) {
               <FontAwesome5 name="volume-mute" size={21} color="white" />
             </Pressable>
           </AnimatedPressable>
-          <View style={styles.playerFull}></View>
+          <Animated.View style={styles.playerFull}>
+            <View style={styles.fullTopBar}>
+              <Pressable
+                style={styles.fullGotoBottomCont}
+                onPress={() => goSmallScreen()}
+              >
+                <AntDesign
+                  style={styles.fullGotoBottom}
+                  name="down"
+                  size={24}
+                  color="white"
+                />
+              </Pressable>
+              <View style={styles.fullOptionsCont}>
+                <Pressable style={styles.fullMuteOptionCont}>
+                  <FontAwesome5
+                    style={styles.fullMuteOption}
+                    name="volume-mute"
+                    size={21}
+                    color="white"
+                  />
+                </Pressable>
+                <Pressable style={styles.fullWaveOptionCont}>
+                  <MaterialIcons
+                    style={styles.fullWaveOption}
+                    name="tune"
+                    size={24}
+                    color="white"
+                  />
+                </Pressable>
+                <Pressable style={styles.fullMoreOptionCont}>
+                  <Entypo
+                    style={styles.moreOptions}
+                    name="dots-three-vertical"
+                    size={16}
+                    color="white"
+                  />
+                </Pressable>
+              </View>
+            </View>
+            <View style={styles.fullmiddleBar}>
+              <View style={styles.fullImageCont}>
+                <Image
+                  style={styles.fullImage}
+                  source={{ uri: currentSong.song_photo }}
+                />
+              </View>
+              <View style={styles.fullSongInfoCont}>
+                <Text style={styles.fullSongName}>{currentSong.song_name}</Text>
+                <Text style={styles.fullArtistsName}>
+                  {currentSong.artists.map((artist) => {
+                    return artist + ", ";
+                  })}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.fullBottomBar}>
+              <View style={styles.fullBottomFirst}>
+                <Pressable style={styles.fullBottomPlaylistCont}>
+                  <MaterialCommunityIcons
+                    name="playlist-music"
+                    size={24}
+                    color="white"
+                  />
+                </Pressable>
+                <Pressable style={styles.fullBottomLikeCont}>
+                  <FontAwesome name="heart-o" size={24} color="white" />
+                </Pressable>
+                <Pressable style={styles.fullBottomAddCont}>
+                  <AntDesign name="plus" size={24} color="white" />
+                </Pressable>
+              </View>
+              <View style={styles.fullBottomSecond}>
+                {/* TODO: Slider here... should be done by you only */}
+              </View>
+              <View style={styles.fullBottomThird}>
+                <Pressable style={styles.fullBottomShuffleCont}>
+                  <Entypo name="shuffle" size={24} color="white" />
+                </Pressable>
+                <Pressable style={styles.fullBottomBackwardCont}>
+                  <AntDesign name="fastbackward" size={20} color="white" />
+                </Pressable>
+                <Pressable style={styles.fullBottomPlayCont}>
+                  <Entypo name="controller-play" size={26} color="white" />
+                </Pressable>
+                <Pressable style={styles.fullBottomForwardCont}>
+                  <AntDesign name="fastforward" size={20} color="white" />
+                </Pressable>
+                <Pressable style={styles.fullBottomLoopCont}>
+                  <Entypo name="loop" size={24} color="white" />
+                </Pressable>
+              </View>
+            </View>
+          </Animated.View>
         </Animated.View>
       </PanGestureHandler>
     </View>
@@ -498,6 +607,7 @@ const styles = StyleSheet.create({
   playerFull: {
     width: "100%",
     height: "100%",
+    zIndex: 8,
   },
   playerSongImageCont: {
     width: 40,
@@ -538,5 +648,83 @@ const styles = StyleSheet.create({
   muteCont: {
     paddingHorizontal: 5,
     marginLeft: 3,
+  },
+  fullGotoBottom: {
+    padding: 10,
+  },
+  fullTopBar: {
+    height: 100,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+  },
+  fullOptionsCont: {
+    flexDirection: "row",
+  },
+  fullMuteOptionCont: {
+    padding: 10,
+  },
+  fullWaveOptionCont: {
+    padding: 10,
+  },
+  fullMoreOptionCont: {
+    padding: 10,
+  },
+  fullmiddleBar: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  fullImageCont: {
+    width: width / 2,
+    height: width / 2,
+    borderRadius: 15,
+    overflow: "hidden",
+    elevation: 5,
+  },
+  fullImage: {
+    width: "100%",
+    height: "100%",
+  },
+  fullSongInfoCont: {
+    width: "100%",
+  },
+  fullSongName: {
+    fontSize: 22,
+    color: "white",
+    width: "100%",
+    textAlign: "center",
+  },
+  fullArtistsName: {
+    fontSize: 16,
+    color: "lightgrey",
+    width: "100%",
+    textAlign: "center",
+  },
+  fullBottomBar: {
+    height: 200,
+    paddingVertical: 15,
+  },
+  fullBottomFirst: {
+    flex: 1,
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexDirection: "row",
+    paddingHorizontal: 30,
+  },
+  fullBottomSecond: {
+    flex: 1,
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexDirection: "row",
+    paddingHorizontal: 30,
+  },
+  fullBottomThird: {
+    flex: 1,
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexDirection: "row",
+    paddingHorizontal: 30,
   },
 });
