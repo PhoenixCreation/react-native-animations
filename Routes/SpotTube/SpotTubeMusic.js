@@ -31,6 +31,7 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
+import { clamp } from "react-native-redash";
 import MusicInfo from "expo-music-info";
 const { width, height } = Dimensions.get("window");
 
@@ -206,6 +207,41 @@ export default function SpotTubeMusic({ navigation }) {
     translateY.value = withSpring(0, SpringConfig);
     offsetY.value = 0;
   };
+
+  const sliderValue = useSharedValue(0);
+  const sliderOffsetValue = useSharedValue(0);
+
+  const sliderGestureEvent = useAnimatedGestureHandler({
+    onStart: () => {},
+    onActive: ({ translationX }) => {
+      sliderValue.value = translationX + sliderOffsetValue.value;
+    },
+    onEnd: ({ translationX }) => {
+      sliderValue.value = translationX + sliderOffsetValue.value;
+      sliderOffsetValue.value = translationX + sliderOffsetValue.value;
+    },
+  });
+
+  const forgroundStyle = useAnimatedStyle(() => {
+    return {
+      width: 40,
+      height: 40,
+      borderRadius: 40,
+      backgroundColor: "black",
+      position: "absolute",
+      alignSelf: "flex-start",
+      transform: [
+        {
+          translateX: interpolate(
+            sliderValue.value,
+            [0, width - 50],
+            [0, width - 50],
+            Extrapolate.CLAMP
+          ),
+        },
+      ],
+    };
+  });
 
   return (
     <View style={styles.container}>
@@ -435,6 +471,17 @@ export default function SpotTubeMusic({ navigation }) {
               </View>
               <View style={styles.fullBottomSecond}>
                 {/* TODO: Slider here... should be done by you only */}
+                <PanGestureHandler
+                  style={sliderStyles.container}
+                  onGestureEvent={sliderGestureEvent}
+                >
+                  <Animated.View style={sliderStyles.innerCont}>
+                    <Animated.View
+                      style={sliderStyles.background}
+                    ></Animated.View>
+                    <Animated.View style={forgroundStyle}></Animated.View>
+                  </Animated.View>
+                </PanGestureHandler>
               </View>
               <View style={styles.fullBottomThird}>
                 <Pressable style={styles.fullBottomShuffleCont}>
@@ -460,6 +507,24 @@ export default function SpotTubeMusic({ navigation }) {
     </View>
   );
 }
+
+const sliderStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  innerCont: {
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  background: {
+    width: "100%",
+    height: 5,
+    backgroundColor: "white",
+    borderRadius: 10,
+  },
+});
 
 const styles = StyleSheet.create({
   container: {
