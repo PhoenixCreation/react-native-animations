@@ -7,13 +7,14 @@ import {
   Dimensions,
   Image,
   Pressable,
-  TouchableHighlight,
+  BackHandler,
 } from "react-native";
 import { Audio } from "expo-av";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedStyle,
   useAnimatedGestureHandler,
+  useAnimatedProps,
   useSharedValue,
   withSpring,
   withTiming,
@@ -60,6 +61,15 @@ export default function SpotTubeMusic({ navigation }) {
   // useEffect(() => {
   //   getUserAudios();
   // }, []);
+
+  BackHandler.addEventListener("hardwareBackPress", () => {
+    if (offsetY.value !== 0) {
+      goSmallScreen();
+      return true;
+    } else {
+      return false;
+    }
+  });
 
   const getUserAudios = async () => {
     try {
@@ -167,8 +177,9 @@ export default function SpotTubeMusic({ navigation }) {
       zIndex: 10,
       borderTopLeftRadius: 15,
       borderTopRightRadius: 15,
-      borderColor: "yellow",
-      borderWidth: 2,
+      borderColor: "#ffff43",
+      borderWidth: 3,
+      borderBottomWidth: 0,
       overflow: "hidden",
       backgroundColor: theme.playerBackgroundColor,
       transform: [{ translateY: translateY.value + (height - BAR_HEIGHT) }],
@@ -213,6 +224,7 @@ export default function SpotTubeMusic({ navigation }) {
   const sliderOffsetValue = useSharedValue(0);
   const sliderState = useSharedValue("normal");
   const [sliderWidth, setSliderWidth] = useState(1);
+  const [sliderCurrentValue, setSliderCurrentValue] = useState(0);
 
   const sliderGestureEvent = useAnimatedGestureHandler({
     onStart: () => {},
@@ -230,6 +242,14 @@ export default function SpotTubeMusic({ navigation }) {
       } else {
         sliderOffsetValue.value = translationX + sliderOffsetValue.value;
       }
+      setSliderCurrentValue(
+        Math.floor(sliderOffsetValue.value / 60) +
+          ":" +
+          Math.floor(
+            sliderOffsetValue.value -
+              Math.floor(sliderOffsetValue.value / 60) * 60
+          )
+      );
     },
     onCancel: () => {
       sliderState.value = "normal";
@@ -766,7 +786,10 @@ export default function SpotTubeMusic({ navigation }) {
                     ></Animated.View>
                     <Animated.View style={forgroundStyle}></Animated.View>
                     <Animated.View style={sliderButtonStyle}></Animated.View>
-                    <Text style={sliderStyles.timeStart} children="2:03" />
+                    <Animated.Text
+                      style={sliderStyles.timeStart}
+                      children={sliderCurrentValue}
+                    />
                     <Text style={sliderStyles.timeEnd}>2:34</Text>
                   </Animated.View>
                 </PanGestureHandler>
@@ -844,6 +867,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    borderWidth: 1,
+    borderColor: theme.playerBackgroundColor,
+    borderBottomColor: "transparent",
   },
   headingCont: {
     flex: 1,
@@ -877,6 +905,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 15,
     paddingBottom: 0,
+    borderWidth: 1,
+    borderColor: theme.playerBackgroundColor,
+    borderTopColor: "transparent",
+    borderBottomColor: "transparent",
+    marginTop: -2,
   },
   albumImageCont: {
     width: "80%",
@@ -918,7 +951,7 @@ const styles = StyleSheet.create({
   albumsListCont: {
     width,
     flex: 1,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: "lightgrey",
     borderRadius: 15,
     borderBottomRightRadius: 0,
