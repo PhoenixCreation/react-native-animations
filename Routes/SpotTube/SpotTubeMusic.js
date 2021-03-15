@@ -57,11 +57,6 @@ export default function SpotTubeMusic({ navigation }) {
 
   const translateY = useSharedValue(0);
   const offsetY = useSharedValue(0);
-
-  // useEffect(() => {
-  //   getUserAudios();
-  // }, []);
-
   BackHandler.addEventListener("hardwareBackPress", () => {
     if (offsetY.value !== 0) {
       goSmallScreen();
@@ -71,27 +66,33 @@ export default function SpotTubeMusic({ navigation }) {
     }
   });
 
+  useEffect(() => {
+    getUserAudios();
+  }, []);
+
   const getUserAudios = async () => {
     try {
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status === "granted") {
         const userSongs = await MediaLibrary.getAssetsAsync({
-          first: 8,
+          first: 999,
           mediaType: MediaLibrary.MediaType.audio,
         });
         var newSongs = [];
         for (var i = 0; i < userSongs.assets.length; i++) {
           const crntSong = userSongs.assets[i];
-          var tempSong = {};
-          tempSong.id = crntSong.id;
-          tempSong.song_name = crntSong.filename;
-          tempSong.song_source = crntSong.uri;
-          tempSong.song_photo = "https://picsum.photos/480/480";
-          tempSong.artist_photo =
-            "https://picsum.photos/480/480?random=" +
-            Math.floor(Math.random() * 100);
-          tempSong.artists = ["No artists"];
-          newSongs.push(tempSong);
+          if (!crntSong.filename.includes("Call recording")) {
+            var tempSong = {};
+            tempSong.id = crntSong.id;
+            tempSong.song_name = crntSong.filename;
+            tempSong.song_source = crntSong.uri;
+            tempSong.song_photo = "https://picsum.photos/480/480";
+            tempSong.artist_photo =
+              "https://picsum.photos/480/480?random=" +
+              Math.floor(Math.random() * 100);
+            tempSong.artists = ["Het patel"];
+            newSongs.push(tempSong);
+          }
         }
         setSongs((prev) => [...prev, ...newSongs]);
       }
@@ -124,18 +125,30 @@ export default function SpotTubeMusic({ navigation }) {
   };
 
   useEffect(() => {
-    return sound?.unloadAsync();
+    if (currentSong.song_source) {
+      sound ? sound.unloadAsync() : null;
+      playSound(currentSong.song_source);
+    }
+  }, [currentSong]);
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          console.log("Unloading Sound");
+          sound.unloadAsync();
+        }
+      : undefined;
   }, [sound]);
 
-  async function playSound() {
+  const playSound = async (location) => {
     console.log("Loading Sound");
-    const { sound, status: newStatus } = await Audio.Sound.createAsync({
-      uri: currentSong.song_source,
+    const { sound } = await Audio.Sound.createAsync({
+      uri: location,
     });
     setSound(sound);
 
     await sound.playAsync();
-  }
+  };
 
   const pauseAudio = () => {
     if (sound) {
@@ -530,7 +543,7 @@ export default function SpotTubeMusic({ navigation }) {
               source={{ uri: currentSong.artist_photo }}
             />
           </View>
-          <Pressable style={styles.shuffleButton}>
+          <Pressable style={styles.shuffleButton} onPress={() => pauseAudio()}>
             <Text style={styles.shuffleButtonText}>Shuffle</Text>
           </Pressable>
         </View>
