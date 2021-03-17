@@ -141,7 +141,6 @@ export default function SpotTubeMusic({ navigation }) {
   }, [sound]);
 
   const playSound = async (location) => {
-    console.log("Loading Sound");
     const { sound } = await Audio.Sound.createAsync({
       uri: location,
     });
