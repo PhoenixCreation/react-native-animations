@@ -1,5 +1,5 @@
-import React from "react";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
+import React, { useRef, useEffect, useState } from "react";
+import { StyleSheet, Text, View, Dimensions, Pressable } from "react-native";
 import { Video } from "expo-av";
 import { theme } from "./SpotTubeConfig";
 import { PanGestureHandler } from "react-native-gesture-handler";
@@ -11,6 +11,8 @@ import Animated, {
   interpolate,
 } from "react-native-reanimated";
 
+import * as MediaLibrary from "expo-media-library";
+
 const AnimatedVideo = Animated.createAnimatedComponent(Video);
 
 const SpringConfig = {
@@ -21,12 +23,33 @@ const { width, height } = Dimensions.get("window");
 
 const BAR_HEIGHT = 60;
 
+const BREAK_POINT = 150;
+
 const SpotTubeVideo = () => {
-  const video = React.useRef(null);
-  const [status, setStatus] = React.useState({});
+  const video = useRef(null);
+  const [status, setStatus] = useState({});
+
+  // useEffect(() => {
+  //   getVideos();
+  // }, []);
+
+  // const getVideos = async () => {
+  //   try {
+  //     const { status } = await MediaLibrary.requestPermissionsAsync();
+  //     if (status === "granted") {
+  //       const userVideos = await MediaLibrary.getAssetsAsync({
+  //         first: 999,
+  //         mediaType: MediaLibrary.MediaType.video,
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const translateY = useSharedValue(0);
   const offsetY = useSharedValue(0);
+  const state = useSharedValue("down");
 
   const onGestureEvent = useAnimatedGestureHandler({
     onActive: ({ translationY }) => {
@@ -34,14 +57,31 @@ const SpotTubeVideo = () => {
     },
     onEnd: ({ translationY, velocityY }) => {
       const point = translationY + 0.2 * velocityY;
-      if (point > 0) {
-        // Go down
-        translateY.value = withTiming(0);
-        offsetY.value = 0;
-      } else {
-        // Full Screen
-        translateY.value = withTiming(-(height - BAR_HEIGHT));
-        offsetY.value = -(height - BAR_HEIGHT);
+      if (state.value === "down") {
+        if (point > 0) {
+          // Go down
+          translateY.value = withTiming(0);
+          offsetY.value = 0;
+        } else {
+          // Go up
+          translateY.value = withTiming(-(height - BAR_HEIGHT));
+          offsetY.value = -(height - BAR_HEIGHT);
+          state.value = "up";
+        }
+      } else if (state.value === "up") {
+        if (point > 0) {
+          // Go down
+          translateY.value = withTiming(0);
+          offsetY.value = 0;
+          state.value = "down";
+        } else {
+          // Go Full Screen
+          translateY.value = withTiming(-(height - BAR_HEIGHT));
+          offsetY.value = -(height - BAR_HEIGHT);
+          // runOnJS(video?.current?.presentFullscreenPlayer);
+
+          state.value = "full";
+        }
       }
     },
   });
@@ -73,10 +113,25 @@ const SpotTubeVideo = () => {
 
   const videoStyle = useAnimatedStyle(() => {
     return {
-      width: "100%",
+      width:
+        translateY.value < -BREAK_POINT
+          ? "100%"
+          : interpolate(
+              translateY.value,
+              [-BREAK_POINT, 0],
+              [width, width / 2]
+            ),
       height: "100%",
     };
   });
+
+  useEffect(() => {
+    if (video.current) {
+      return () => {
+        video.current.unloadAsync();
+      };
+    }
+  }, [video]);
 
   return (
     <View style={styles.container}>
@@ -90,15 +145,23 @@ const SpotTubeVideo = () => {
                 style={videoStyle}
                 source={{
                   uri:
-                    "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+                    "file:///storage/emulated/0/Download/@RMG.The.Flash.2014.S07E03.480p.hdtv.x264.mkv",
                 }}
-                useNativeControls={false}
-                resizeMode="contain"
-                isLooping
-                onPlaybackStatusUpdate={(status) => setStatus(() => status)}
+                useNativeControls={true}
+                resizeMode="cover"
+                onPlaybackStatusUpdate={(newstatus) => setStatus(newstatus)}
               />
             </Animated.View>
           </PanGestureHandler>
+          <Pressable
+            onPress={() => {
+              status.isPlaying
+                ? video.current.pauseAsync()
+                : video.current.playAsync();
+            }}
+          >
+            <Text>{status.isPlaying ? "pause" : "Play"}</Text>
+          </Pressable>
         </View>
       </Animated.View>
     </View>
